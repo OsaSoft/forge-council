@@ -1,0 +1,4 @@
+name: forge-council
+version: 0.1.0
+description: Multi-agent council orchestration via Claude Code agent teams. USE WHEN convening developer councils, multi-perspective reviews, or team-based problem solving.
+events: []
