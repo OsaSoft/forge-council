@@ -2,223 +2,90 @@
 
 Eight specialists. One unified verdict.
 
-One AI agent reviewing your code is a monologue. It sees what it sees and misses everything outside its frame — the N+1 query a DBA would catch in seconds, the deployment risk an SRE would flag before it hits production, the edge case a QA engineer would write a test for before lunch. forge-council turns code review into a conversation between specialists: spawn a Developer, a Tester, a SecurityArchitect, a Database expert — each reviewing independently, in parallel, from their own domain. The lead synthesizes their findings into a single verdict with cross-cutting issues, disagreements, and prioritized actions. Or skip the council entirely and invoke any specialist standalone — run a threat model, stress-test a decision, research a topic across the web.
+One AI reviewing your code is a monologue — it misses the N+1 query a DBA would catch, the deployment risk an SRE would flag, the edge case a QA engineer would test for. forge-council provides eight specialist agents that review, design, and build from independent perspectives. Orchestrate them as a council or invoke any specialist standalone.
 
-## Quick start
+## What it does
 
-Run the demo to see the full roster and what a council review looks like:
+**Developer Council** (`/DeveloperCouncil`) — Convenes 2-6 specialists in parallel, each working from their domain. The main session acts as team lead: parses the task, selects relevant specialists, spawns them, and synthesizes their independent findings into a single verdict with cross-cutting issues, disagreements, and prioritized actions.
 
-```
-/Demo
-```
+**Standalone specialists** — Every agent works independently via the Task tool. SecurityArchitect runs threat models. Opponent stress-tests proposals. Researcher investigates topics across the web. No orchestration required.
 
-```
-╔══════════════════════════════════════════════════════════╗
-║                    forge-council                        ║
-║         Eight specialists. One unified verdict.         ║
-╚══════════════════════════════════════════════════════════╝
-
-┌──────────────────────────────────────────────────────────┐
-│  THE COUNCIL (multi-perspective review)                  │
-├──────────────────────┬────────┬──────────────────────────┤
-│ Developer            │ sonnet │ Implementation quality    │
-│ Database             │ sonnet │ Schema & query perf       │
-│ DevOps               │ sonnet │ CI/CD & deployment        │
-│ DocumentationWriter  │ sonnet │ README & API docs         │
-│ Tester               │ sonnet │ Coverage & edge cases     │
-│ SecurityArchitect    │ sonnet │ Threat modeling           │
-├──────────────────────┴────────┴──────────────────────────┤
-│  STANDALONE SPECIALISTS                                  │
-├──────────────────────┬────────┬──────────────────────────┤
-│ Opponent             │ opus   │ Devil's advocate          │
-│ Researcher           │ sonnet │ Deep web research         │
-└──────────────────────┴────────┴──────────────────────────┘
-```
-
-Then point it at your code:
-
-```
-/DeveloperCouncil Review src/api/ for security, performance, and correctness
-```
-
-Or invoke a single specialist:
-
-```
-/DeveloperCouncil Review the database migration in db/migrations/024_add_teams.sql
-```
-
-The lead spawns only the relevant agents — a migration review gets Developer + Database + Tester, not the full roster.
-
-## What it provides
-
-**Developer Council** (`/DeveloperCouncil`) — Convenes 2-6 specialists in parallel, each reviewing from their domain. The main session acts as team lead: selects relevant specialists, spawns them, collects findings, synthesizes a unified verdict with cross-cutting issues and prioritized actions.
-
-**Standalone specialists** — Every agent works independently via the Task tool. SecurityArchitect runs threat models. Opponent stress-tests proposals. Researcher investigates topics across the web. No orchestration needed.
+**Demo** (`/Demo`) — Interactive showcase of the full roster, council flow, and example invocations. Try it first.
 
 ## What it looks like
 
-You ask the council to build something. Each specialist contributes what a generalist would miss:
+You ask the council to design something. Five specialists work in parallel, each contributing what a generalist would miss:
 
 ```
-/DeveloperCouncil Design and scaffold a prompt regression testing CLI —
+/DeveloperCouncil Design a prompt regression testing CLI —
 run prompts against multiple LLM providers, diff outputs, track regressions
 ```
 
+The lead spawns Developer, Database, Tester, DevOps, and SecurityArchitect. Each works independently. Minutes later, the verdict arrives:
+
 ```
-┌──────────────────────────────────────────────────────────────────┐
-│  Council Verdict: promptdiff CLI — Design & Scaffold             │
-│  Specialists: Developer, Database, Tester, DevOps, Security     │
-└──────────────────────────────────────────────────────────────────┘
+Council Verdict: promptdiff CLI — Design & Scaffold
+Specialists: Developer, Database, Tester, DevOps, SecurityArchitect
 
-ARCHITECTURE ── Developer ────────────────────────────────────────
-  promptdiff/
-    src/
-      main.rs              # CLI entry: run, diff, report
-      providers/           # Trait-based: OpenAI, Anthropic, local
-        mod.rs             # Provider trait: send(prompt) → Response
-        openai.rs
-        anthropic.rs
-      runner.rs            # Parallel execution across providers
-      differ.rs            # Semantic + exact diff with scoring
-      reporter.rs          # Terminal table + JSON + markdown output
-    tests/
-      fixtures/            # Golden prompt/response pairs
+Dev:      Trait-based provider architecture. One runner fans out with
+          tokio::JoinSet. Differ scores semantic similarity + exact match.
+Database: SQLite for zero-config persistence. Cost tracking per-run
+          enables "this refactor saved $4/day." Composite index on
+          (prompt_hash, provider) for fast regression lookups.
+QA:       Three test layers — unit, integration, golden. Golden tests
+          use promptdiff to test itself. Edge cases: empty responses,
+          non-deterministic outputs, rate limits, API changes.
+Ops:      cargo install — single binary. CI via exit codes (0/1/2).
+          GitHub Action posts regression report as PR comment.
+          Cost guard: max $0.50/run prevents runaway API spend.
+Security: API keys from env vars only, never config. Ship 20 adversarial
+          prompts as a built-in injection detection suite. Per-provider
+          rate limiting prevents accidental DDoS during test runs.
 
-  One trait, one runner, one differ. Each provider implements
-  Provider::send(). Runner fans out with tokio::JoinSet.
-  Differ scores semantic similarity (cosine on embeddings) +
-  exact match for structured outputs.
-
-DATA LAYER ── Database ───────────────────────────────────────────
-  SQLite for local-first, zero-config persistence:
-    runs(id, suite, timestamp, git_sha)
-    results(id, run_id, provider, prompt_hash, response, latency_ms,
-            tokens_in, tokens_out, cost_usd)
-    baselines(prompt_hash, provider, expected_response, threshold)
-
-  Composite index on (prompt_hash, provider) for fast regression
-  lookups. Cost tracking per-run enables "this refactor saved $4/day."
-  Migration: single schema file, embedded via rusqlite.
-
-TEST STRATEGY ── Tester ──────────────────────────────────────────
-  Three layers:
-    1. Unit: differ scoring against known pairs (exact, similar, drift)
-    2. Integration: mock provider that returns fixture responses
-    3. Golden: promptdiff tests itself — run the test suite, diff
-       against committed baselines, fail CI if regression detected
-
-  Edge cases to cover from day one:
-    • Empty responses (provider timeout → empty string)
-    • Non-deterministic outputs (temperature > 0 needs threshold)
-    • Rate limit handling (429 backoff, not crash)
-    • Provider API changes (structured error vs. garbage)
-
-DEPLOYMENT ── DevOps ─────────────────────────────────────────────
-  cargo install promptdiff — single binary, no runtime dependencies.
-  CI integration via exit codes: 0 = pass, 1 = regression, 2 = error.
-
-  GitHub Action workflow:
-    - Trigger: on PR, on schedule (daily baseline refresh)
-    - Cache: SQLite db as artifact between runs
-    - Output: regression report as PR comment (markdown)
-
-  Cost guard: configurable max-spend-per-run in config.toml.
-  Default: $0.50. Prevents runaway costs from a test suite typo.
-
-SECURITY ── SecurityArchitect ────────────────────────────────────
-  API keys: read from env vars only, never config files. Support
-  for 1Password CLI (op read) and AWS Secrets Manager as sources.
-  Keys never appear in logs, test output, or SQLite rows.
-
-  Prompt injection test suite: ship 20 adversarial prompts as a
-  built-in suite. Run with: promptdiff run --suite injection-baseline.
-  Detects when a model starts following injected instructions.
-
-  Rate limiting: per-provider token bucket. Prevents accidental
-  DDoS of API endpoints during parallel test runs.
-
-RECOMMENDED NEXT STEPS ──────────────────────────────────────────
-  1. Scaffold the project with cargo init + Provider trait (Dev)
-  2. Create SQLite schema + migration (Database)
-  3. Implement OpenAI + Anthropic providers (Dev)
-  4. Build differ with threshold-based scoring (Dev + QA)
-  5. Add golden test fixtures + CI workflow (QA + Ops)
-  6. Ship injection baseline suite (Security)
-  7. Write the README — this verdict is the first draft (Docs)
+Next steps:
+  1. Scaffold with cargo init + Provider trait (Dev)
+  2. SQLite schema + migration (Database)
+  3. Golden test fixtures + CI workflow (QA + Ops)
+  4. Injection baseline suite (Security)
 ```
 
-One prompt, five perspectives, a buildable tool. The Developer sketches the architecture, the DBA designs storage that enables cost tracking, QA defines a testing strategy that uses the tool to test itself, Ops handles CI and cost guards, and Security adds an injection detection suite nobody else thought of.
+One prompt, five perspectives, a buildable tool. The DBA adds cost tracking nobody asked for. QA designs tests that use the tool to test itself. Security ships an injection detection suite the Developer wouldn't have thought of.
 
-Standalone specialists work the same way, without the council:
+Standalone specialists work the same way, without the council. You ask the Opponent to challenge a decision:
 
 ```
 Task: Opponent — "We're planning to rewrite the monolith into microservices"
 ```
 
 ```
-┌────────────────────────────────────────────────────────────┐
-│  Devil's Advocate: Monolith → Microservices Rewrite        │
-└────────────────────────────────────────────────────────────┘
+Steel man: The monolith is a deployment bottleneck — 45-minute deploys,
+unclear ownership, full regression on every change.
 
-STEEL MAN ────────────────────────────────────────────────────
-  The monolith has become a deployment bottleneck — a single
-  change requires full regression, deploys take 45 minutes, and
-  team ownership boundaries are unclear. Microservices would give
-  independent deployment, clearer ownership, and technology choice
-  per service.
+Key challenges:
+  1. Distributed transactions replace ACID guarantees
+  2. Trading deploy complexity for operational complexity
+  3. Team size (4 engineers) is below the microservices threshold
 
-KEY CHALLENGES ───────────────────────────────────────────────
-  1. Distributed transactions replace ACID guarantees — every
-     cross-service operation becomes an eventual consistency problem.
-  2. You're trading deploy complexity for operational complexity.
-     45-minute deploys become 12 services to monitor, debug, and
-     keep compatible.
-  3. Team size (4 engineers) is below the threshold where
-     microservices pay off. You'll spend more time on infra than
-     on features.
-
-HARDEST QUESTIONS ────────────────────────────────────────────
-  • What specific problem does this solve that a modular monolith
-    wouldn't?
-  • Do you have the ops capacity to run 12 services in production?
-  • What's the rollback plan if the rewrite stalls at 40%?
-
-OVERALL: Fundamentally sound motivation, wrong solution for the
-team size. A modular monolith with clear module boundaries solves
-the ownership and deploy problems without the operational tax.
-Revisit microservices when the team hits 8-10 engineers.
+Overall: Sound motivation, wrong solution for the team size. A modular
+monolith solves ownership and deploy problems without the operational tax.
+Revisit microservices at 8-10 engineers.
 ```
 
-## Agents
-
-| Agent | Model | Council | Standalone | Use for |
-|-------|-------|---------|------------|---------|
-| **Developer** | sonnet | yes | yes | Implementation quality, patterns, correctness |
-| **Database** | sonnet | yes | yes | Schema design, query performance, migrations |
-| **DevOps** | sonnet | yes | yes | CI/CD, deployment, monitoring, reliability |
-| **DocumentationWriter** | sonnet | yes | yes | README quality, API docs, developer experience |
-| **Tester** | sonnet | yes | yes | Test strategy, coverage, edge cases, regression |
-| **SecurityArchitect** | sonnet | yes | yes | Threat modeling, security policy, architectural risk |
-| **Opponent** | opus | no | yes | Devil's advocate, stress-test ideas and decisions |
-| **Researcher** | sonnet | no | yes | Deep web research, multi-query synthesis, citations |
-
-## Council flow
+## The council
 
 ```
-User invokes /DeveloperCouncil
+/DeveloperCouncil [task]
     │
     ▼
-┌──────────────────────────────────────┐
-│  Lead: parse task, select 2-6       │
-│  specialists based on what's needed  │
-└──────────────────────────────────────┘
+┌─────────────────────────────────────────┐
+│  Lead: parse task, select specialists   │
+│  based on what the task needs           │
+└─────────────────────────────────────────┘
     │
     ▼
 ┌──────────┬──────────┬──────────┬──────────┐
-│Developer │ Tester   │ DevOps   │ Security │  ← spawned in parallel
+│Developer │ Tester   │ DevOps   │ Security │  ← in parallel
 │          │          │          │ Architect│
-│ reviews  │ reviews  │ reviews  │ reviews  │
-│ code     │ tests    │ infra    │ threats  │
 └────┬─────┴────┬─────┴────┬─────┴────┬─────┘
      │          │          │          │
      └──────────┴──────────┴──────────┘
@@ -228,16 +95,28 @@ User invokes /DeveloperCouncil
          │  Lead: synthesize   │
          │  verdict + actions  │
          └─────────────────────┘
-                    │
-                    ▼
-           Council Verdict
 ```
 
 The lead always includes Developer and Tester for code tasks. Database, DevOps, DocumentationWriter, and SecurityArchitect join when their domain is relevant. Say "full council" to spawn all six.
 
+## Agents
+
+| Agent | Model | Council | Use for |
+|-------|-------|---------|---------|
+| **Developer** | sonnet | yes | Implementation quality, patterns, correctness |
+| **Database** | sonnet | yes | Schema design, query performance, migrations |
+| **DevOps** | sonnet | yes | CI/CD, deployment, monitoring, reliability |
+| **DocumentationWriter** | sonnet | yes | README quality, API docs, developer experience |
+| **Tester** | sonnet | yes | Test strategy, coverage, edge cases, regression |
+| **SecurityArchitect** | sonnet | yes | Threat modeling, security policy, architectural risk |
+| **Opponent** | opus | standalone | Devil's advocate, stress-test ideas and decisions |
+| **Researcher** | sonnet | standalone | Deep web research, multi-query synthesis, citations |
+
+Every agent also works standalone via the Task tool.
+
 ## Install
 
-Works as a **standalone Claude Code plugin** or as a **forge-core module**.
+Works as a **standalone Claude Code plugin** or as a **forge-core module**. No compiled code — forge-council is pure markdown orchestration.
 
 ### As a forge-core module
 
@@ -250,10 +129,9 @@ Hooks/sync-agents.sh
 ### Standalone
 
 ```bash
-bash bin/install-agents.sh
+git clone https://github.com/N4M3Z/forge-council.git
+bash forge-council/bin/install-agents.sh
 ```
-
-## Prerequisites
 
 Council mode uses agent teams (parallel spawning). Enable in settings:
 
@@ -265,20 +143,18 @@ Council mode uses agent teams (parallel spawning). Enable in settings:
 }
 ```
 
-Without this flag, `/DeveloperCouncil` falls back to sequential subagent calls — same specialists, same verdict, just slower.
-
-Standalone agents work without any flags.
+Without this flag, `/DeveloperCouncil` falls back to sequential subagent calls — same specialists, same verdict, just slower. Standalone agents work without any flags.
 
 ## Skills
 
 | Skill | Purpose |
 |-------|---------|
 | `/DeveloperCouncil` | Convene a multi-perspective developer council for review, design, or debugging |
-| `/Demo` | Showcase the agent roster, council flow, and standalone specialists |
+| `/Demo` | Interactive showcase of the agent roster, council flow, and example invocations |
 
 ## Configuration
 
-`defaults.yaml` defines the agent roster and council composition. Override in `config.yaml` (gitignored):
+Zero config required. `defaults.yaml` defines the agent roster and council composition. Override in `config.yaml` (gitignored):
 
 | Setting | Default | What it controls |
 |---------|---------|-----------------|
@@ -290,7 +166,7 @@ Model selection lives in agent frontmatter (`agents/*.md`). To change a model, e
 
 ## Architecture
 
-Eight markdown agent files, one skill, one install script. No compiled code — forge-council is pure orchestration.
+Eight markdown agent files, two skills, one install script.
 
 ```
 agents/
@@ -304,12 +180,13 @@ agents/
   Researcher.md           # Web research, multi-query synthesis
 skills/
   DeveloperCouncil/       # Council orchestration skill
+  Demo/                   # Interactive showcase
 bin/
   install-agents.sh       # Standalone agent deployment
 defaults.yaml             # Agent roster + council composition
 module.yaml               # Module metadata
 ```
 
-Agents are deployed to `~/.claude/agents/` by `sync-agents.sh` (forge-core) or `install-agents.sh` (standalone). Each agent file contains frontmatter (`claude.name`, `claude.model`, `claude.description`, `claude.tools`) plus a structured body (Role, Expertise, Instructions, Output Format, Constraints).
+Each agent file contains `claude.*` frontmatter (name, model, description, tools) plus a structured body: Role, Expertise, Instructions, Output Format, Constraints. Agents are deployed to `~/.claude/agents/` by `sync-agents.sh` (forge-core) or `install-agents.sh` (standalone).
 
 > `CLAUDE.md` and `AGENTS.md` are autogenerated by `/Init`. Do not edit directly — run `/Update` to regenerate.
