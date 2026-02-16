@@ -58,16 +58,20 @@ Agents require a session restart to be discovered.
 
 ## What gets installed
 
-| Agent | Model | Purpose |
-|-------|-------|---------|
-| Developer | sonnet | Implementation quality, patterns, correctness |
-| Database | sonnet | Schema design, query performance, migrations |
-| DevOps | sonnet | CI/CD, deployment, monitoring, reliability |
-| DocumentationWriter | sonnet | README quality, API docs, developer experience |
-| Tester | sonnet | Test strategy, coverage, edge cases, regression |
-| SecurityArchitect | sonnet | Threat modeling, security policy, architectural risk |
-| Opponent | opus | Devil's advocate, stress-test ideas and decisions |
-| Researcher | sonnet | Deep web research, multi-query synthesis, citations |
+| Agent | Model | Council | Purpose |
+|-------|-------|---------|---------|
+| Developer | sonnet | dev, generic | Implementation quality, patterns, correctness |
+| Database | sonnet | dev | Schema design, query performance, migrations |
+| DevOps | sonnet | dev | CI/CD, deployment, monitoring, reliability |
+| DocumentationWriter | sonnet | dev | README quality, API docs, developer experience |
+| Tester | sonnet | dev | Test strategy, coverage, edge cases, regression |
+| SecurityArchitect | sonnet | dev | Threat modeling, security policy, architectural risk |
+| Architect | sonnet | generic | System design, boundaries, scalability, trade-offs |
+| Designer | sonnet | generic, product | UX, user needs, accessibility, interaction design |
+| ProductManager | sonnet | product | Requirements clarity, roadmap alignment, market fit |
+| Analyst | sonnet | product | Success metrics, KPIs, measurement, business impact |
+| Opponent | opus | standalone | Devil's advocate, stress-test ideas and decisions |
+| Researcher | sonnet | standalone | Deep web research, multi-query synthesis, citations |
 
 No compiled binaries — forge-council is pure markdown orchestration. Agents are markdown files deployed to `~/.claude/agents/`.
 
@@ -86,9 +90,21 @@ agents:
     - DocumentationWriter
     - Tester
     - SecurityArchitect
+    - Architect
+    - Designer
+    - ProductManager
+    - Analyst
   standalone:
     - Opponent
     - Researcher
+
+councils:
+  developer:
+    roles: [Developer, Database, DevOps, DocumentationWriter, Tester, SecurityArchitect]
+  generic:
+    roles: [Architect, Designer, Developer, Researcher]
+  product:
+    roles: [ProductManager, Designer, Developer, Analyst]
 ```
 
 ### Module config override

@@ -5,21 +5,21 @@
 ## Quick check
 
 ```bash
-ls ~/.claude/agents/{Developer,Database,DevOps,DocumentationWriter,Tester,SecurityArchitect,Opponent,Researcher}.md
+ls ~/.claude/agents/{Developer,Database,DevOps,DocumentationWriter,Tester,SecurityArchitect,Architect,Designer,ProductManager,Analyst,Opponent,Researcher}.md
 ```
 
-Expected: all 8 files present.
+Expected: all 12 files present.
 
 ## Agent deployment
 
 ```bash
-# All 8 agents deployed
-ls ~/.claude/agents/ | grep -E "^(Developer|Database|DevOps|DocumentationWriter|Tester|SecurityArchitect|Opponent|Researcher)\.md$" | wc -l
-# Should output: 8
+# All 12 agents deployed
+ls ~/.claude/agents/ | grep -E "^(Developer|Database|DevOps|DocumentationWriter|Tester|SecurityArchitect|Architect|Designer|ProductManager|Analyst|Opponent|Researcher)\.md$" | wc -l
+# Should output: 12
 
 # Each agent has synced-from header
-grep -l "^# synced-from:" ~/.claude/agents/{Developer,Database,DevOps,DocumentationWriter,Tester,SecurityArchitect,Opponent,Researcher}.md | wc -l
-# Should output: 8
+grep -l "^# synced-from:" ~/.claude/agents/{Developer,Database,DevOps,DocumentationWriter,Tester,SecurityArchitect,Architect,Designer,ProductManager,Analyst,Opponent,Researcher}.md | wc -l
+# Should output: 12
 ```
 
 ## Agent frontmatter
@@ -30,7 +30,7 @@ for f in Modules/forge-council/agents/*.md; do
   name=$(grep "^claude.name:" "$f" | head -1 | awk -F': ' '{print $2}')
   echo "$name"
 done
-# Should output 8 PascalCase names, each matching its filename
+# Should output 12 PascalCase names, each matching its filename
 ```
 
 ## No stale agents
@@ -44,14 +44,14 @@ ls ~/.claude/agents/ | grep -i "^Council" || echo "Clean — no stale Council ag
 
 ```bash
 ls Modules/forge-council/skills/*/SKILL.md
-# Should list: DeveloperCouncil, Demo
+# Should list: Council, Demo, DeveloperCouncil, ProductCouncil
 ```
 
 ## Agent teams (optional)
 
 ```bash
 echo "${CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS:-0}"
-# 1 = parallel council mode available
+# 1 = parallel council mode available (3-round debate runs fastest)
 # 0 = sequential fallback (still works, just slower)
 ```
 
@@ -63,12 +63,12 @@ Invoke the demo to verify agents load correctly:
 /Demo agents
 ```
 
-Should display the full roster with all 8 agents and their models.
+Should display the full roster with all 12 agents and their models.
 
 ## Expected results
 
-- All 8 agent files deployed to `~/.claude/agents/`
+- All 12 agent files deployed to `~/.claude/agents/`
 - No orphaned `Council*` agent files
 - Agent names match filenames (PascalCase)
-- Both skills discoverable (DeveloperCouncil, Demo)
+- 4 skills discoverable (Council, Demo, DeveloperCouncil, ProductCouncil)
 - `/Demo` renders the agent roster without errors

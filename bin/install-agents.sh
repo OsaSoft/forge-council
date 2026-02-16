@@ -24,6 +24,10 @@ COUNCIL_AGENTS=(
   DocumentationWriter
   Tester
   SecurityArchitect
+  Architect
+  Designer
+  ProductManager
+  Analyst
   Opponent
   Researcher
 )

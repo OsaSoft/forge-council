@@ -25,13 +25,13 @@ Present the module with impact:
 ```
 ╔══════════════════════════════════════════════════════════╗
 ║                    forge-council                        ║
-║         Eight specialists. One unified verdict.         ║
+║      Twelve specialists. Three councils. One verdict.   ║
 ╚══════════════════════════════════════════════════════════╝
 ```
 
 Then explain the core idea in 2-3 sentences:
 
-> A single AI reviewing code sees one perspective. forge-council provides eight specialist agents — five form a developer council for multi-perspective reviews, three operate as standalone specialists. Each agent brings domain expertise that a generalist would miss.
+> A single AI is a single perspective. forge-council provides twelve specialist agents organized into three council types — developer, generic, and product. All councils use 3-round debate: initial positions → challenges → convergence. Each agent brings domain expertise that a generalist would miss.
 
 ## Step 3: The Roster
 
@@ -50,7 +50,7 @@ Format as:
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│  THE COUNCIL (multi-perspective review)                 │
+│  DEVELOPER COUNCIL (/DeveloperCouncil)                  │
 ├──────────────────────┬────────┬─────────────────────────┤
 │ Developer            │ sonnet │ Implementation quality   │
 │ Database             │ sonnet │ Schema & query perf      │
@@ -58,6 +58,20 @@ Format as:
 │ DocumentationWriter  │ sonnet │ README & API docs        │
 │ Tester               │ sonnet │ Coverage & edge cases    │
 │ SecurityArchitect    │ sonnet │ Threat modeling          │
+├──────────────────────┴────────┴─────────────────────────┤
+│  GENERIC COUNCIL (/Council)                             │
+├──────────────────────┬────────┬─────────────────────────┤
+│ Architect            │ sonnet │ System design            │
+│ Designer             │ sonnet │ UX & user needs          │
+│ Developer            │ sonnet │ Implementation reality   │
+│ Researcher           │ sonnet │ Data & precedent         │
+├──────────────────────┴────────┴─────────────────────────┤
+│  PRODUCT COUNCIL (/ProductCouncil)                      │
+├──────────────────────┬────────┬─────────────────────────┤
+│ ProductManager       │ sonnet │ Requirements & roadmap   │
+│ Designer             │ sonnet │ UX & user needs          │
+│ Developer            │ sonnet │ Tech feasibility         │
+│ Analyst              │ sonnet │ Metrics & impact         │
 ├──────────────────────┴────────┴─────────────────────────┤
 │  STANDALONE SPECIALISTS                                 │
 ├──────────────────────┬────────┬─────────────────────────┤
@@ -68,22 +82,24 @@ Format as:
 
 ## Step 4: Council Flow Demo
 
-Show the council orchestration pattern with a concrete example:
+Show the 3-round debate pattern with a concrete example:
 
 ```
-Example: /DeveloperCouncil Review the payment processing module
+Example: /Council Should we use WebSockets or SSE for real-time updates?
 
 What happens:
-  1. Lead parses the task → code + deployment + security relevant
-  2. Spawns: Developer, Tester, DevOps, SecurityArchitect (4 agents)
-  3. Each reviews independently, in parallel
-  4. Lead synthesizes findings into a unified verdict
+  1. Lead selects: Architect, Designer, Developer, Researcher
+  2. ROUND 1: Each gives initial position (in parallel)
+  3. [Checkpoint]: Lead shows positions, asks user for input
+  4. ROUND 2: Each responds to others' points BY NAME (in parallel)
+  5. ROUND 3: Each identifies agreements + final recommendation (in parallel)
+  6. Lead synthesizes: convergence, disagreements, recommended path
 
-The result:
-  - Cross-cutting issues (flagged by multiple specialists)
-  - Per-specialist findings with file:line references
-  - Prioritized action items
-  - Disagreements between specialists (both sides presented)
+Debate modes:
+  - Default: checkpoint after Round 1 (ask user before debate)
+  - autonomous/fast: all 3 rounds without stopping
+  - interactive: checkpoint after every round
+  - quick: Round 1 only + synthesis
 ```
 
 ## Step 5: Standalone Specialist Showcase
@@ -112,7 +128,10 @@ Task: Researcher — "Current best practices for rate limiting in distributed sy
 
 If the user requested `council` mode or the full showcase:
 
-Ask the user what they'd like the council to review. Then invoke `/DeveloperCouncil` with their input.
+Ask the user which council type to demo, then invoke it with their input:
+- `/Council [topic]` — cross-domain debate
+- `/DeveloperCouncil [task]` — code review or architecture
+- `/ProductCouncil [spec]` — requirements or strategy
 
 If the user requested `agents` mode: pick one agent and run it on a real file from the current project as a demonstration.
 
@@ -121,12 +140,14 @@ If no live demo was requested, end with:
 ```
 Ready to try it?
 
-  /DeveloperCouncil [describe what to review]
+  /Council [topic to debate]
+  /DeveloperCouncil [code to review]
+  /ProductCouncil [requirements to evaluate]
 
   Or invoke any specialist standalone:
-    Task tool → subagent_type: "SecurityArchitect"
+    Task tool → subagent_type: "Architect"
     Task tool → subagent_type: "Opponent"
-    Task tool → subagent_type: "Researcher"
+    Task tool → subagent_type: "ProductManager"
 ```
 
 ## Constraints

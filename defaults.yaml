@@ -12,6 +12,10 @@ agents:
     - DocumentationWriter
     - Tester
     - SecurityArchitect
+    - Architect
+    - Designer
+    - ProductManager
+    - Analyst
   standalone:
     - Opponent
     - Researcher
@@ -26,3 +30,17 @@ councils:
       - DocumentationWriter
       - Tester
       - SecurityArchitect
+  generic:
+    description: PAI-style 3-round debate council
+    roles:
+      - Architect
+      - Designer
+      - Developer
+      - Researcher
+  product:
+    description: Product requirements and strategy council
+    roles:
+      - ProductManager
+      - Designer
+      - Developer
+      - Analyst
