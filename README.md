@@ -204,7 +204,7 @@ Hooks/sync-agents.sh
 
 ```bash
 git clone --recurse-submodules https://github.com/N4M3Z/forge-council.git
-bash forge-council/bin/install-agents.sh
+bash forge-council/lib/install-agents.sh forge-council/agents/
 ```
 
 Council mode uses agent teams (parallel spawning). Enable in settings:
@@ -253,7 +253,7 @@ Model selection lives in agent frontmatter (`agents/*.md`). To change a model, e
 
 ## Architecture
 
-Twelve markdown agent files, four skills, one install script.
+Twelve markdown agent files, four skills, and a deployment utility in forge-lib.
 
 ```
 agents/
@@ -274,8 +274,8 @@ skills/
   DeveloperCouncil/       # Developer council orchestration
   ProductCouncil/         # Product council orchestration
   Demo/                   # Interactive showcase
-bin/
-  install-agents.sh       # Standalone agent deployment
+lib/
+  install-agents.sh       # Agent deployment utility (from forge-lib)
 defaults.yaml             # Agent roster + council composition
 module.yaml               # Module metadata
 ```

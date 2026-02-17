@@ -31,7 +31,7 @@ This checks out [forge-lib](https://github.com/N4M3Z/forge-lib) into `lib/`, pro
 ### 2. Deploy agents
 
 ```bash
-bash bin/install-agents.sh
+bash lib/install-agents.sh agents/
 ```
 
 This reads agent files from `agents/` and installs them to `~/.claude/agents/`.
@@ -125,8 +125,8 @@ Model selection lives in agent frontmatter (`agents/*.md`). To change a model, e
 ## Updating
 
 ```bash
-git pull --recurse-submodules    # update module + forge-lib
-bin/install-agents.sh --clean    # re-deploy agents (removes old, installs new)
+git pull --recurse-submodules          # update module + forge-lib
+bash lib/install-agents.sh agents/ --clean    # re-deploy agents (removes old, installs new)
 ```
 
 ## Dependencies
