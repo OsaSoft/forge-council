@@ -25,22 +25,20 @@ To install the specialist agents and skills into your local environment:
 ```bash
 make install
 ```
-*Note: If using forge-core, use `Hooks/sync-agents.sh` instead.*
+*Note: This targets both `~/.claude/agents/` and `~/.gemini/agents/`.*
 
-### Running a Council
-Invoke a council by using its skill name followed by your query:
-```
-/DeveloperCouncil [task description or file paths]
-/ProductCouncil [feature spec or strategy question]
-/Council [any topic for debate]
+### Configuration (Gemini CLI)
+Sub-agents must be explicitly enabled in `~/.gemini/settings.json`:
+```json
+{
+  "experimental": { "enableAgents": true }
+}
 ```
 
-### Debate Modes
-You can control the debate flow by adding keywords to your request:
-- **Default (checkpoint):** Pauses after Round 1 for user input.
-- **`autonomous` / `fast`:** Runs all 3 rounds without interruption.
-- **`interactive` / `step by step`:** Pauses after every round.
-- **`quick` / `quick check`:** Runs only Round 1 followed by synthesis.
+### Discovery & Verification
+Invoke a council or specialist by using its name or slash command. If they don't appear, refresh the session:
+- **Claude Code**: Restart the session.
+- **Gemini CLI**: Run `/agents refresh` (or `/skills reload`) and `/agents list` (or `/skills list`).
 
 ## Development Conventions
 

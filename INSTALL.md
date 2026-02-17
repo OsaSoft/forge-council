@@ -34,7 +34,7 @@ This checks out [forge-lib](https://github.com/N4M3Z/forge-lib) into `lib/`, pro
 make install
 ```
 
-This installs specialists to `~/.claude/agents/` and skills to `~/.gemini/skills/`.
+This installs specialists to `~/.claude/agents/` (Claude Code) and `~/.gemini/agents/` (Gemini CLI), and skills to `~/.gemini/skills/`.
 
 ### 3. Enable Agent Teams (Claude Code Only)
 
@@ -51,11 +51,24 @@ Add to your `~/.claude/settings.json`:
 
 ### 4. Running Agents in Gemini CLI
 
-In the Gemini CLI, sub-agents are managed and viewed using the introspect command. After running `make install`, follow these steps:
+In the Gemini CLI, sub-agents are an experimental feature and must be enabled in your configuration.
 
-1.  **Verification**: Run `/introspect` to see the current session state, including all **loaded sub-agents** (Developer, Architect, etc.).
-2.  **Usage**: To interact with a specialist standalone, you can simply refer to them by name in your query, or if a skill facilitates it, use the skill's slash command.
-3.  **Councils**: Since Gemini CLI does not support parallel `TeamCreate`, council skills (`/DeveloperCouncil`, `/Council`, etc.) will run in **Sequential Simulation Mode**. The lead agent will adopt the specialists' personas one by one to provide the multi-perspective review.
+Add the following to your `~/.gemini/settings.json` (or via `/settings`):
+
+```json
+{
+  "experimental": {
+    "enableAgents": true
+  }
+}
+```
+
+Once enabled, follow these steps to use your specialists:
+
+1.  **Discovery**: Run `/agents refresh` (or `/skills reload`) to force a re-scan of the installed specialists.
+2.  **Verification**: Run `/agents list` (or `/skills list`) to see all available specialists (Developer, Architect, etc.) and council commands.
+3.  **Usage**: To launch a specialist standalone, use `/agents run <name> [query]`. You can also invoke councils via their slash commands (e.g., `/DeveloperCouncil` or `/Demo`).
+4.  **Councils**: Since Gemini CLI does not support parallel `TeamCreate`, council skills will run in **Sequential Simulation Mode**, where the lead agent adopts the specialists' personas one by one.
 
 ### 5. Verification
 Run `/Demo agents` to verify that all 12 specialists are correctly recognized by your current CLI.
