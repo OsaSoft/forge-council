@@ -4,11 +4,50 @@ Twelve specialists. Three councils. One verdict.
 
 A single AI agent is a single perspective. It gives you one take — its own — and misses everything outside its frame. forge-council provides specialist agents that work from independent perspectives: architecture, design, implementation, testing, security, product, research. Assemble them into councils for multi-round debates, or invoke any specialist standalone.
 
+## Quick Start
+
+```bash
+git clone --recurse-submodules https://github.com/N4M3Z/forge-council.git
+cd forge-council
+make install
+make verify
+```
+
+Then in your session:
+
+```text
+/Demo
+/Council [topic]
+/DeveloperCouncil [task]
+/ProductCouncil [requirements]
+/KnowledgeCouncil [knowledge-management topic]
+```
+
+## Makefile Commands
+
+Primary commands:
+
+```bash
+make install                 # install agents + skills
+make install-agents          # install agent artifacts (Claude + Gemini)
+make install-skills          # install skills (Claude + Gemini + Codex)
+make install-skills-claude   # install skills to ~/.claude/skills
+make install-skills-gemini   # install skills to ~/.gemini/skills
+make install-skills-codex    # install skills to ~/.codex/skills
+make verify                  # run verification checks
+make verify-skills           # verify skills across runtimes
+```
+
+Notes:
+- `install-skills-codex` generates specialist wrapper skills from `agents/*.md` during install.
+- Generated wrappers are staged in a temp directory and cleaned automatically.
+- Runtime routing is metadata-driven via each skill's `SKILL.yaml`.
+
 ## What it does
 
 **3-round debate** — All councils use a structured debate where specialists respond to each other's points across three rounds: initial positions, challenges, convergence. The lead synthesizes areas of agreement, remaining disagreements, and recommended actions.
 
-**Three council types** — `/DeveloperCouncil` for code review, architecture, and debugging. `/Council` for cross-domain strategy and design debates. `/ProductCouncil` for requirements, features, and go/no-go decisions. Each selects the right specialists for the task.
+**Council skills** — `/DeveloperCouncil` for code review, architecture, and debugging. `/Council` for cross-domain strategy and design debates. `/ProductCouncil` for requirements, features, and go/no-go decisions. `/KnowledgeCouncil` for knowledge architecture and memory lifecycle decisions. Each selects the right specialists for the task.
 
 **User checkpoints** — After Round 1, the lead shows you the initial positions and asks for your input before the debate rounds begin. Add context, redirect focus, or skip to synthesis. Override with `autonomous` (no stops), `interactive` (stop every round), or `quick` (one round only).
 
@@ -227,6 +266,7 @@ Without this flag, councils fall back to sequential subagent calls — same spec
 | `/Council` | Cross-domain 3-round debate with Architect, Designer, Developer, Researcher |
 | `/DeveloperCouncil` | Code review, architecture, debugging with up to 6 dev specialists |
 | `/ProductCouncil` | Requirements review, feature scoping, strategy with PM, Designer, Dev, Analyst |
+| `/KnowledgeCouncil` | Knowledge architecture and memory lifecycle decisions with docs/arch/research specialists |
 | `/Demo` | Interactive showcase — roster, flow, and example invocations |
 
 ### Debate modes
@@ -254,7 +294,7 @@ Model selection lives in agent frontmatter (`agents/*.md`). To change a model, e
 
 ## Architecture
 
-Twelve markdown agent files, four skills, and a deployment utility in forge-lib.
+Thirteen markdown agent files, five skills, and deployment utilities in forge-lib.
 
 ```
 agents/
@@ -268,15 +308,19 @@ agents/
   Opponent.md             # Devil's advocate, critical analysis
   ProductManager.md       # Requirements, roadmap, market fit
   Researcher.md           # Web research, multi-query synthesis
+  ForensicAgent.md        # PII and secret detection forensic specialist
   SecurityArchitect.md    # Threat modeling, security policy
   Tester.md               # Test strategy, coverage, edge cases
 skills/
   Council/                # Generic 3-round debate
   DeveloperCouncil/       # Developer council orchestration
+  KnowledgeCouncil/       # Knowledge management council orchestration
   ProductCouncil/         # Product council orchestration
   Demo/                   # Interactive showcase
 lib/
   install-agents.sh       # Agent deployment utility (from forge-lib)
+  install-skills.sh       # Multi-runtime skill installer (from forge-lib)
+  generate-agent-skills.sh # Specialist wrapper skill generation (from forge-lib)
 defaults.yaml             # Agent roster + council composition
 module.yaml               # Module metadata
 ```

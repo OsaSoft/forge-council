@@ -1,8 +1,8 @@
 # AGENTS.md -- forge-council
 
-> Pure-markdown multi-agent orchestration for Claude Code. Twelve specialists,
-> three councils, structured 3-round debates. No compiled code -- only markdown
-> agent definitions, YAML configuration, shell scripts, and Claude Code skills.
+> Pure-markdown multi-agent orchestration for Claude Code, Gemini CLI, and Codex.
+> Thirteen specialists, four councils, structured 3-round debates. No compiled
+> code -- only markdown agent definitions, YAML configuration, and shell scripts.
 
 ## Build / Install / Verify
 
@@ -11,28 +11,27 @@ markdown files to `~/.claude/agents/`.
 
 ```bash
 make install            # install agents + skills
-make install-agents     # install agents only to ~/.claude/agents/
+make install-agents     # install agents to ~/.claude/agents/ and ~/.gemini/agents/
 make install-skills     # install skills to ~/.claude/skills, ~/.gemini/skills, ~/.codex/skills
 make install-skills-claude  # install skills only to ~/.claude/skills/
 make install-skills-gemini  # install skills only to ~/.gemini/skills/
-make install-skills-codex   # install skills only to ~/.codex/skills/
+make install-skills-codex   # install skills to ~/.codex/skills/ (+ generated specialist wrappers)
+make verify-skills      # verify skills across Claude, Gemini, Codex
 make clean              # remove previously installed agents
 make verify             # run verification checks from VERIFY.md
 
-bash bin/install-agents.sh            # standalone install (no Make)
-bash bin/install-agents.sh --dry-run  # preview without writing
-bash bin/install-agents.sh --clean    # clean old agents then reinstall
+bash lib/install-agents.sh agents            # standalone install (no Make)
+bash lib/install-agents.sh agents --dry-run  # preview without writing
+bash lib/install-agents.sh agents --clean    # clean old agents then reinstall
 ```
 
 No automated tests, linter, or CI pipeline. Verification is manual per
-`VERIFY.md` (check 12 agents in `~/.claude/agents/`, 4 skills, synced-from
-headers). Run `make verify` for a quick sanity check.
+`VERIFY.md` plus `make verify`/`make verify-skills`.
 
 ## Project Structure
 
 ```
 agents/              # 13 agent definitions (12 rostered + ForensicAgent)
-bin/                 # install-agents.sh (standalone deployment)
 lib/                 # git submodule -> forge-lib (shell utilities)
 skills/              # 5 skill dirs: Council, Demo, DeveloperCouncil, ProductCouncil, KnowledgeCouncil
 defaults.yaml        # Agent roster + council composition (committed)
@@ -127,6 +126,8 @@ fallback. Main session IS the moderator (never spawn one). Maximum roster size 7
 
 forge-lib submodule (`lib/`) provides: `frontmatter.sh` (`fm_value`, `fm_body`),
 `install-agents.sh` (`deploy_agent`, `deploy_agents_from_dir`),
+`install-skills.sh` (provider-aware skill installer),
+`generate-agent-skills.sh` (generated specialist wrapper skills for Codex),
 `strip-front.sh` (`strip_front [--keep key1,key2] file.md`).
 
 ## YAML Configuration
@@ -136,6 +137,8 @@ forge-lib submodule (`lib/`) provides: `frontmatter.sh` (`fm_value`, `fm_body`),
 - `module.yaml` -- module metadata. Update `version` on releases.
 - Two-space indentation, unquoted string values, PascalCase agent names.
 - Model selection lives in agent frontmatter, NOT in YAML config.
+- Keep `defaults.yaml` and council skill roster sections in sync. Current council
+  runtime selection is defined in `skills/*/SKILL.md`.
 
 ## Markdown Style
 
@@ -148,15 +151,15 @@ forge-lib submodule (`lib/`) provides: `frontmatter.sh` (`fm_value`, `fm_body`),
 
 **Adding a new agent:** Create `agents/YourAgent.md` with correct frontmatter
 and structured body (Role, Expertise, Instructions, Output Format, Constraints).
-Add to `defaults.yaml` roster. Run `bash bin/install-agents.sh --dry-run` to
+Add to `defaults.yaml` roster. Run `bash lib/install-agents.sh agents --dry-run` to
 test. Commit: `feat: add YourAgent for [domain]`.
 
-**Modifying a skill:** Edit `skills/SkillName/SKILL.md`. Keep step numbering
-intact. If changing roster logic, update both the skill AND `defaults.yaml`.
-Test with `/Demo` or a council invocation before committing.
+**Modifying a skill:** Edit `skills/SkillName/SKILL.md` and `skills/SkillName/SKILL.yaml`.
+Keep step numbering intact. If changing roster logic, update both the skill and
+`defaults.yaml`. Test with `/Demo` or a council invocation before committing.
 
 **Updating models or tools:** Edit agent frontmatter (`claude.model` or
-`claude.tools`), then re-deploy with `bash bin/install-agents.sh --clean`.
+`claude.tools`), then re-deploy with `bash lib/install-agents.sh agents --clean`.
 Restart Claude Code for changes to take effect.
 
 ## Git Conventions
