@@ -44,3 +44,9 @@ councils:
       - Designer
       - Developer
       - Analyst
+  knowledge:
+    description: Knowledge management and vault organization council
+    roles:
+      - DocumentationWriter
+      - Architect
+      - Researcher
