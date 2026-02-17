@@ -25,7 +25,11 @@ install-agents:
 	@bash $(LIB_DIR)/install-agents.sh $(AGENT_SRC)
 
 install-skills:
-	@bash $(LIB_DIR)/install-skills.sh $(SKILL_SRC)
+	@if command -v gemini >/dev/null 2>&1; then \
+	  bash $(LIB_DIR)/install-skills.sh $(SKILL_SRC); \
+	else \
+	  echo "Skipping skill installation (gemini CLI not found)"; \
+	fi
 
 clean:
 	@bash $(LIB_DIR)/install-agents.sh $(AGENT_SRC) --clean
@@ -43,10 +47,14 @@ check:
 	@test -d hooks && echo "  ok hooks/" || echo "  MISSING hooks/"
 
 verify:
-	@if [ -f "VERIFY.md" ]; then 
-		echo "Running verification checks (as defined in VERIFY.md)..."; 
-		ls ~/.claude/agents/{Developer,Database,DevOps,DocumentationWriter,Tester,SecurityArchitect,Architect,Designer,ProductManager,Analyst,Opponent,Researcher}.md; 
-		gemini skills list | grep -E "Council|Demo|DeveloperCouncil|ProductCouncil"; 
-	else 
-		echo "VERIFY.md not found."; 
+	@if [ -f "VERIFY.md" ]; then \
+	  echo "Running verification checks (as defined in VERIFY.md)..."; \
+	  ls ~/.claude/agents/{Developer,Database,DevOps,DocumentationWriter,Tester,SecurityArchitect,Architect,Designer,ProductManager,Analyst,Opponent,Researcher}.md; \
+	  if command -v gemini >/dev/null 2>&1; then \
+	    gemini skills list | grep -E "Council|Demo|DeveloperCouncil|ProductCouncil"; \
+	  else \
+	    echo "  skip gemini skill verification (gemini CLI not installed)"; \
+	  fi; \
+	else \
+	  echo "VERIFY.md not found."; \
 	fi
