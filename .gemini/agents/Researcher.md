@@ -2,7 +2,7 @@
 name: researcher
 description: Strategic web researcher — multi-query decomposition, parallel search, scholarly synthesis with citations. USE WHEN deep research, topic investigation, source analysis, evidence synthesis.
 kind: local
-model: sonnet
+model: gemini-1.5-flash
 tools:
   - read_file
   - grep_search

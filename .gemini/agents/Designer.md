@@ -2,7 +2,7 @@
 name: designer
 description: UX and interaction designer — user needs, flows, friction points, accessibility, information architecture. USE WHEN UX review, interaction design, user flow analysis, accessibility assessment.
 kind: local
-model: sonnet
+model: gemini-1.5-flash
 tools:
   - read_file
   - grep_search

@@ -28,6 +28,28 @@ bash lib/install-agents.sh agents --clean    # clean old agents then reinstall
 No automated tests, linter, or CI pipeline. Verification is manual per
 `VERIFY.md` plus `make verify`/`make verify-skills`.
 
+## Codex Experimental Features
+
+Codex `/experimental` toggles persist in `~/.codex/config.toml` under
+`[features]`.
+
+```toml
+[features]
+collab = true
+apps = true
+```
+
+Use CLI helpers to manage persistent state:
+
+```bash
+codex features enable collab
+codex features enable apps
+codex features list
+```
+
+Note: one-off CLI overrides (`--enable` / `--disable`) can temporarily override
+saved config values for that run.
+
 ## Project Structure
 
 ```

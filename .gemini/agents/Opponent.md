@@ -2,7 +2,7 @@
 name: opponent
 description: Devil's advocate — stress-tests ideas, plans, proposals, and decisions. USE WHEN critical analysis, challenge assumptions, decision review, risk assessment.
 kind: local
-model: opus
+model: gemini-1.5-pro
 tools:
   - read_file
   - grep_search

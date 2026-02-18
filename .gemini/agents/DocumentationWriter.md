@@ -2,7 +2,7 @@
 name: documentation-writer
 description: Documentation specialist — README quality, API docs, developer experience, onboarding clarity. USE WHEN documentation review, README evaluation, developer experience assessment, onboarding analysis.
 kind: local
-model: sonnet
+model: gemini-1.5-flash
 tools:
   - read_file
   - grep_search

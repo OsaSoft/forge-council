@@ -2,7 +2,7 @@
 name: database
 description: Database specialist — schema design, query performance, migrations, data integrity. USE WHEN database review, schema design, query optimization, migration safety.
 kind: local
-model: sonnet
+model: gemini-1.5-flash
 tools:
   - read_file
   - grep_search

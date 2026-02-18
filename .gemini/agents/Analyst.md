@@ -2,7 +2,7 @@
 name: analyst
 description: Data analyst — success metrics, KPIs, measurement strategies, business impact analysis, data-driven evaluation. USE WHEN metrics design, success criteria, impact analysis, data strategy.
 kind: local
-model: sonnet
+model: gemini-1.5-flash
 tools:
   - read_file
   - grep_search

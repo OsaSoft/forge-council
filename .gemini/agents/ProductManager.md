@@ -2,7 +2,7 @@
 name: product-manager
 description: Product manager — requirements clarity, user goals, roadmap alignment, market fit, prioritization trade-offs. USE WHEN requirements review, feature scoping, roadmap decisions, product strategy.
 kind: local
-model: sonnet
+model: gemini-1.5-flash
 tools:
   - read_file
   - grep_search

@@ -2,7 +2,7 @@
 name: tester
 description: QA specialist — test strategy, coverage gaps, edge cases, regression risk, test architecture. USE WHEN test review, coverage analysis, edge case identification, regression assessment.
 kind: local
-model: sonnet
+model: gemini-1.5-flash
 tools:
   - read_file
   - grep_search
@@ -10,6 +10,7 @@ tools:
   - run_shell_command
   - write_file
   - replace
+  - google_web_search
 ---
 # synced-from: Tester.md
 

@@ -2,7 +2,7 @@
 name: dev-ops
 description: DevOps specialist — CI/CD, deployment, monitoring, reliability, security posture. USE WHEN deployment review, CI/CD pipeline, infrastructure assessment, operational risk.
 kind: local
-model: sonnet
+model: gemini-1.5-flash
 tools:
   - read_file
   - grep_search

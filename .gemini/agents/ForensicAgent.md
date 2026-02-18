@@ -2,12 +2,13 @@
 name: forensic-agent
 description: Forensic security analyst — PII detection, secret scanning, identity leak auditing across git history, staged changes, and working tree. USE WHEN PII scan, leaked name, pre-publication audit, git history audit, secret scan, security review, forensic analysis.
 kind: local
-model: sonnet
+model: gemini-1.5-pro
 tools:
   - read_file
   - grep_search
   - glob
   - run_shell_command
+  - google_web_search
 ---
 # synced-from: ForensicAgent.md
 

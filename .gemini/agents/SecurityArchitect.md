@@ -2,12 +2,13 @@
 name: security-architect
 description: Security policy architect — threat modeling, security posture, policy design, architectural risk. USE WHEN security review, threat model, security policy, architectural security assessment.
 kind: local
-model: sonnet
+model: gemini-1.5-pro
 tools:
   - read_file
   - grep_search
   - glob
   - run_shell_command
+  - google_web_search
 ---
 # synced-from: SecurityArchitect.md
 
