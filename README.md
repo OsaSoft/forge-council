@@ -13,6 +13,24 @@ make install     # Installs locally to .gemini/ by default
 make verify
 ```
 
+Then in your session:
+
+```text
+/Demo
+/Council [topic]
+/DeveloperCouncil [task]
+/ProductCouncil [requirements]
+/KnowledgeCouncil [knowledge-management topic]
+```
+
+Or invoke any specialist standalone — no council needed:
+
+```text
+Task: Opponent — "We should rewrite the backend in Rust"
+Task: Researcher — "Best practices for rate limiting in distributed systems"
+Task: SecurityArchitect — "Threat model our authentication system"
+```
+
 > **Note**: `make install` defaults to `SCOPE=workspace`. To install globally for your user, use `make install SCOPE=user`.
 
 ## Makefile Commands
@@ -284,21 +302,21 @@ You can define separate model tiers and whitelists for Gemini and Claude in `def
 
 ```yaml
 gemini:
-  fast: gemini-1.5-flash
-  strong: gemini-1.5-pro
   models:
     - gemini-1.5-flash
     - gemini-1.5-pro
     - gemini-2.0-flash-exp
+  fast: gemini-1.5-flash
+  strong: gemini-1.5-pro
 
 claude:
-  fast: sonnet
-  strong: opus
   models:
     - sonnet
     - opus
     - haiku
     - claude-3-5-sonnet-20240620
+  fast: sonnet
+  strong: opus
 ```
 
 Only whitelisted models are included in the generated agent frontmatter for each provider.
@@ -327,7 +345,7 @@ agents/
 skills/
   Council/                # Generic 3-round debate
   DeveloperCouncil/       # Developer council orchestration
-  KnowledgeCouncil/       # Knowledge management council orchestration
+  KnowledgeCouncil/       # Knowledge architecture and memory lifecycle decisions
   ProductCouncil/         # Product council orchestration
   Demo/                   # Interactive showcase
 lib/
