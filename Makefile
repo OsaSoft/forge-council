@@ -1,6 +1,6 @@
 # forge-council Makefile
 
-.PHONY: help sync install install-agents install-skills install-skills-claude install-skills-gemini install-skills-codex clean verify verify-skills verify-skills-claude verify-skills-gemini verify-skills-codex test lint check
+.PHONY: help sync install install-agents install-skills install-skills-claude install-skills-gemini install-skills-codex apply-teams-config clean verify verify-skills verify-skills-claude verify-skills-gemini verify-skills-codex test lint check
 
 # Variables
 AGENT_SRC = agents
@@ -10,6 +10,7 @@ SCOPE ?= workspace
 CLAUDE_SKILLS_DST ?= $(if $(filter workspace,$(SCOPE)),$(CURDIR)/.claude/skills,$(HOME)/.claude/skills)
 GEMINI_SKILLS_DST ?= $(HOME)/.gemini/skills
 CODEX_SKILLS_DST ?= $(if $(filter workspace,$(SCOPE)),$(CURDIR)/.codex/skills,$(HOME)/.codex/skills)
+COUNCIL_SKILLS = Council DeveloperCouncil ProductCouncil KnowledgeCouncil
 
 help:
 	@echo "forge-council management commands:"
@@ -42,7 +43,7 @@ install: sync install-agents install-skills
 install-agents: ensure-lib
 	@bash $(LIB_DIR)/install-agents.sh $(AGENT_SRC) --scope "$(SCOPE)"
 
-install-skills: install-skills-claude install-skills-gemini install-skills-codex
+install-skills: install-skills-claude install-skills-gemini install-skills-codex apply-teams-config
 
 install-skills-claude: ensure-lib
 	@if [ "$(SCOPE)" = "all" ]; then \
@@ -72,6 +73,31 @@ install-skills-codex: ensure-lib
 	  echo "Error: Invalid SCOPE '$(SCOPE)'. Use workspace, user, or all."; \
 	  exit 1; \
 	fi
+
+apply-teams-config:
+	@teams=$$(awk '/^teams:/ { sub("^teams: *",""); print; exit }' \
+	  $$(if [ -f config.yaml ]; then echo config.yaml; else echo defaults.yaml; fi)); \
+	teams=$${teams:-auto}; \
+	if [ "$$teams" = "auto" ]; then \
+	  echo "Teams config: auto (no change needed)"; \
+	  exit 0; \
+	fi; \
+	echo "Applying teams config: $$teams"; \
+	dsts=""; \
+	case "$(SCOPE)" in \
+	  workspace) dsts="$(CURDIR)/.claude/skills $(CURDIR)/.codex/skills" ;; \
+	  user)      dsts="$(HOME)/.claude/skills $(HOME)/.codex/skills" ;; \
+	  all)       dsts="$(CURDIR)/.claude/skills $(CURDIR)/.codex/skills $(HOME)/.claude/skills $(HOME)/.codex/skills" ;; \
+	esac; \
+	for dst in $$dsts; do \
+	  for skill in $(COUNCIL_SKILLS); do \
+	    f="$$dst/$$skill/SKILL.md"; \
+	    if [ -f "$$f" ]; then \
+	      sed -i "s/forge-council-teams: auto/forge-council-teams: $$teams/" "$$f"; \
+	      echo "  $$skill: teams=$$teams ($$dst)"; \
+	    fi; \
+	  done; \
+	done
 
 clean: ensure-lib
 	@bash $(LIB_DIR)/install-agents.sh $(AGENT_SRC) --clean

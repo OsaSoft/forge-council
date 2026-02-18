@@ -50,7 +50,7 @@ Invoke a council or specialist by using its name or slash command. If they don't
 
 - **Agent Definitions:** Agents are defined in `agents/*.md` using YAML frontmatter for metadata (name, model, description, tools) and Markdown for behavioral instructions (Role, Expertise, Constraints).
 - **Skill Definitions:** Skills in `skills/*/SKILL.md` define the orchestration logic. They follow a standard multi-step process: Gate Check -> Parse Input -> Select Specialists -> Spawn Team -> 3-Round Debate -> Synthesis.
-- **Agent Teams:** The framework prefers using the `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` feature for parallel agent execution. If disabled, it falls back to sequential task execution.
+- **Agent Teams:** The framework prefers using the `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` feature (or `teams: enabled` in `config.yaml`) for parallel agent execution. If disabled, it falls back to sequential task execution.
 - **Modularity:** Avoid hardcoding rosters in skills; refer to `defaults.yaml` or allow the lead to select relevant specialists based on the task context.
 
 ## Model Resolution & Whitelisting

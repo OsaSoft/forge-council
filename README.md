@@ -269,6 +269,14 @@ Council mode uses agent teams (parallel spawning). Enable in settings:
 }
 ```
 
+To skip the environment check entirely, add to `config.yaml`:
+
+```yaml
+teams: enabled
+```
+
+Then re-run `make install`. Councils will use agent teams without prompting.
+
 Without this flag, councils fall back to sequential subagent calls — same specialists, same debate, just slower. Standalone agents work without any flags.
 
 ## Skills

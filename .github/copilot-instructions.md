@@ -92,7 +92,7 @@ Add to `~/.claude/settings.json`:
 }
 ```
 
-With `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`, councils spawn agents in parallel (TeamCreate + Task per agent). Without it, they run sequentially — same verdict, slower. Standalone agents work without any flag.
+With `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` (or `teams: enabled` in `config.yaml`), councils spawn agents in parallel (TeamCreate + Task per agent). Without it, they run sequentially — same verdict, slower. Standalone agents work without any flag.
 
 ## Key Conventions
 

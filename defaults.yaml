@@ -57,6 +57,12 @@ models:
   fast: sonnet
   strong: opus
 
+# Teams mode: auto | enabled | sequential
+# - auto: check CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS env at runtime
+# - enabled: always use agent teams (skip env check)
+# - sequential: always use sequential mode (skip env check)
+teams: auto
+
 # Provider-specific overrides and whitelists
 gemini:
   models:

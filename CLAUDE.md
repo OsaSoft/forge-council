@@ -44,7 +44,7 @@ module.yaml       module metadata (name, version)
 
 Skills define the orchestration. The main session IS the moderator (never spawn a separate moderator). Flow: gate check (agent teams flag) -> parse input -> select roster (max 7) -> spawn team (TeamCreate + parallel Task) -> 3 rounds -> synthesize verdict + teardown (TeamDelete). If agent teams are unavailable, falls back to sequential subagent calls.
 
-Parallel council execution requires `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` in `~/.claude/settings.json` env. Without it, same debate runs sequentially.
+Parallel council execution requires `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` in `~/.claude/settings.json` env, or `teams: enabled` in `config.yaml`. Without either, same debate runs sequentially.
 
 ### Agent Files (`agents/*.md`)
 

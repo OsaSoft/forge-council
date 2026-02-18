@@ -80,6 +80,10 @@ Add to your `~/.claude/settings.json`:
 }
 ```
 
+**Skip the permission prompt**: If you always use agent teams and want to avoid the
+confirmation on each council invocation, set `teams: enabled` in `config.yaml` and
+re-run `make install`. See `defaults.yaml` for all options (`auto`, `enabled`, `sequential`).
+
 ### 5. Running Agents in Gemini CLI
 
 In the Gemini CLI, sub-agents are an experimental feature and must be enabled in your configuration.

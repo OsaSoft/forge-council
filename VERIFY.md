@@ -66,6 +66,9 @@ Expected: all 5 council skills present after `make install-skills-codex` (worksp
 
 ## Agent teams (optional)
 
+If `teams` is set to `enabled` in `config.yaml`, the gate check is skipped at runtime.
+Otherwise, verify the env var:
+
 ```bash
 echo "${CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS:-0}"
 # 1 = parallel council mode available (3-round debate runs fastest)

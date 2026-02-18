@@ -113,7 +113,8 @@ provider routing (`claude`, `gemini`, `codex`).
 
 Required metadata keys in `SKILL.yaml`: `name`, `description`, `argument-hint`,
 and `providers.*.enabled` for each supported runtime. Body in `SKILL.md` is numbered
-steps (Step 1 through 7/8). All council skills follow: gate check, parse input,
+steps (Step 1 through 7/8). All council skills follow: gate check (configurable via
+`teams` key in `config.yaml`), parse input,
 select roster, spawn team, 3 debate rounds, synthesize + teardown, sequential
 fallback. Main session IS the moderator (never spawn one). Maximum roster size 7.
 

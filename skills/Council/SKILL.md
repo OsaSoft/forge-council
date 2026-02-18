@@ -10,12 +10,18 @@ You are the **moderator** of a council debate. Your job is to convene diverse sp
 
 ## Step 1: Gate Check
 
-```bash
-echo "${CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS:-0}"
-```
+<!-- forge-council-teams: auto -->
 
-- If `1`: use agent teams (TeamCreate + parallel Task spawning)
-- If `0` or missing: fall back to sequential mode (see Step 8)
+Read the HTML comment above for the configured teams mode:
+
+- **`enabled`**: Agent teams are available. Use TeamCreate + parallel Task spawning. Proceed to Step 2. If TeamCreate fails unexpectedly, fall back to sequential mode (Step 8).
+- **`sequential`**: Use sequential mode directly. Skip to Step 8.
+- **`auto`** (default): Check the environment:
+  ```bash
+  echo "${CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS:-0}"
+  ```
+  - If `1`: use agent teams (TeamCreate + parallel Task spawning)
+  - If `0` or missing: fall back to sequential mode (see Step 8)
 
 ## Step 2: Parse Input
 
