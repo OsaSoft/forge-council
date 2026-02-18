@@ -1,22 +1,24 @@
 # forge-council Makefile
 
-.PHONY: help install install-agents install-skills install-skills-claude install-skills-gemini install-skills-codex clean verify verify-skills verify-skills-claude verify-skills-gemini verify-skills-codex test lint check
+.PHONY: help sync install install-agents install-skills install-skills-claude install-skills-gemini install-skills-codex clean verify verify-skills verify-skills-claude verify-skills-gemini verify-skills-codex test lint check
 
 # Variables
 AGENT_SRC = agents
 SKILL_SRC = skills
 LIB_DIR = lib
+SCOPE ?= workspace
 CLAUDE_SKILLS_DST ?= $(HOME)/.claude/skills
 GEMINI_SKILLS_DST ?= $(HOME)/.gemini/skills
 CODEX_SKILLS_DST ?= $(HOME)/.codex/skills
 
 help:
 	@echo "forge-council management commands:"
-	@echo "  make install               Install both agents and skills"
-	@echo "  make install-agents        Install specialist agents to ~/.claude/agents/ and ~/.gemini/agents/"
+	@echo "  make install               Install both agents and skills (SCOPE=workspace|user|all, default: workspace)"
+	@echo "  make sync                  Sync council rosters from defaults.yaml to skills/"
+	@echo "  make install-agents        Install specialist agents (uses SCOPE)"
 	@echo "  make install-skills        Install skills for Claude, Gemini, and Codex"
 	@echo "  make install-skills-claude Install skills to ~/.claude/skills/"
-	@echo "  make install-skills-gemini Install skills to ~/.gemini/skills/ via gemini CLI"
+	@echo "  make install-skills-gemini Install skills via gemini CLI (uses SCOPE)"
 	@echo "  make install-skills-codex  Install skills to ~/.codex/skills/ (includes generated specialist wrappers)"
 	@echo "  make verify-skills         Verify skills for Claude, Gemini, and Codex"
 	@echo "  make clean                 Remove previously installed agents"
@@ -25,24 +27,33 @@ help:
 	@echo "  make lint                  Shellcheck all scripts"
 	@echo "  make check                 Verify module structure"
 
-install: install-agents install-skills
+ensure-lib:
+	@if [ ! -f "$(LIB_DIR)/install-agents.sh" ]; then \
+		echo "Initializing submodules..."; \
+		git submodule update --init --recursive; \
+	fi
+
+sync: ensure-lib
+	@bash $(LIB_DIR)/sync-rosters.sh defaults.yaml
+
+install: sync install-agents install-skills
 	@echo "Installation complete. Restart your session or reload agents/skills."
 
-install-agents:
-	@bash $(LIB_DIR)/install-agents.sh $(AGENT_SRC)
+install-agents: ensure-lib
+	@bash $(LIB_DIR)/install-agents.sh $(AGENT_SRC) --scope "$(SCOPE)"
 
 install-skills: install-skills-claude install-skills-gemini install-skills-codex
 
-install-skills-claude:
+install-skills-claude: ensure-lib
 	@bash $(LIB_DIR)/install-skills.sh $(SKILL_SRC) --provider claude --dst "$(CLAUDE_SKILLS_DST)"
 
-install-skills-gemini:
-	@bash $(LIB_DIR)/install-skills.sh $(SKILL_SRC) --provider gemini --dst "$(GEMINI_SKILLS_DST)"
+install-skills-gemini: ensure-lib
+	@bash $(LIB_DIR)/install-skills.sh $(SKILL_SRC) --provider gemini --scope "$(SCOPE)"
 
-install-skills-codex:
+install-skills-codex: ensure-lib
 	@bash $(LIB_DIR)/install-skills.sh $(SKILL_SRC) --provider codex --dst "$(CODEX_SKILLS_DST)" --include-agent-wrappers --agents-dir "$(AGENT_SRC)"
 
-clean:
+clean: ensure-lib
 	@bash $(LIB_DIR)/install-agents.sh $(AGENT_SRC) --clean
 
 verify-skills: verify-skills-claude verify-skills-gemini verify-skills-codex
@@ -91,12 +102,14 @@ lint:
 
 check:
 	@test -f module.yaml && echo "  ok module.yaml" || echo "  MISSING module.yaml"
-	@test -d hooks && echo "  ok hooks/" || echo "  MISSING hooks/"
 
 verify: verify-skills
 	@if [ -f "VERIFY.md" ]; then \
 	  echo "Running verification checks (as defined in VERIFY.md)..."; \
-	  ls ~/.claude/agents/{Developer,Database,DevOps,DocumentationWriter,Tester,SecurityArchitect,Architect,Designer,ProductManager,Analyst,Opponent,Researcher}.md; \
+	  echo "Checking Claude agents..."; \
+	  ls $(HOME)/.claude/agents/{Developer,Database,DevOps,DocumentationWriter,Tester,SecurityArchitect,Architect,Designer,ProductManager,Analyst,Opponent,Researcher,ForensicAgent}.md; \
+	  echo "Checking Gemini agents..."; \
+	  ls $(HOME)/.gemini/agents/{Developer,Database,DevOps,DocumentationWriter,Tester,SecurityArchitect,Architect,Designer,ProductManager,Analyst,Opponent,Researcher,ForensicAgent}.md; \
 	else \
 	  echo "VERIFY.md not found."; \
 	fi
