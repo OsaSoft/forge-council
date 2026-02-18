@@ -152,8 +152,12 @@ verify-skills-codex:
 	test $$missing -eq 0
 
 
-test:
-	@echo "No tests defined"
+test: ensure-lib
+	@MODULE_ROOT="$(CURDIR)" bash $(LIB_DIR)/tests/test-module-structure.sh
+	@MODULE_ROOT="$(CURDIR)" bash $(LIB_DIR)/tests/test-agent-frontmatter.sh
+	@MODULE_ROOT="$(CURDIR)" bash $(LIB_DIR)/tests/test-defaults-consistency.sh
+	@MODULE_ROOT="$(CURDIR)" bash $(LIB_DIR)/tests/test-skill-integrity.sh
+	@MODULE_ROOT="$(CURDIR)" bash $(LIB_DIR)/tests/test-deploy-parity.sh
 
 lint:
 	@if find . -name '*.sh' -not -path '*/target/*' | grep -q .; then \

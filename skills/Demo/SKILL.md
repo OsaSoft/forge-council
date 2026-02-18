@@ -25,13 +25,13 @@ Present the module with impact:
 ```
 ╔══════════════════════════════════════════════════════════╗
 ║                    forge-council                        ║
-║      Twelve specialists. Three councils. One verdict.   ║
+║    Thirteen specialists. Four councils. One verdict.    ║
 ╚══════════════════════════════════════════════════════════╝
 ```
 
 Then explain the core idea in 2-3 sentences:
 
-> A single AI is a single perspective. forge-council provides twelve specialist agents organized into three council types — developer, generic, and product. All councils use 3-round debate: initial positions → challenges → convergence. Each agent brings domain expertise that a generalist would miss.
+> A single AI is a single perspective. forge-council provides thirteen specialist agents organized into four council types — developer, generic, product, and knowledge. All councils use 3-round debate: initial positions → challenges → convergence. Each agent brings domain expertise that a generalist would miss.
 
 ## Step 3: The Roster
 
@@ -77,10 +77,17 @@ Format as:
 │ Developer            │ Tech feasibility                 │
 │ Analyst              │ Metrics & impact                 │
 ├──────────────────────┴──────────────────────────────────┤
+│  KNOWLEDGE COUNCIL (/KnowledgeCouncil)                  │
+├──────────────────────┬──────────────────────────────────┤
+│ DocumentationWriter  │ Note architecture                │
+│ Architect            │ Structural patterns              │
+│ Researcher           │ Evidence & precedent             │
+├──────────────────────┴──────────────────────────────────┤
 │  STANDALONE SPECIALISTS                                 │
 ├──────────────────────┬──────────────────────────────────┤
 │ Opponent             │ Devil's advocate (strong tier)   │
 │ Researcher           │ Deep web research                │
+│ ForensicAgent        │ PII & secret detection           │
 └──────────────────────┴──────────────────────────────────┘
 ```
 
@@ -136,6 +143,7 @@ Ask the user which council type to demo, then invoke it with their input:
 - `/Council [topic]` — cross-domain debate
 - `/DeveloperCouncil [task]` — code review or architecture
 - `/ProductCouncil [spec]` — requirements or strategy
+- `/KnowledgeCouncil [topic]` — vault organization, memory lifecycle
 
 If the user requested `agents` mode: pick one agent and run it on a real file from the current project as a demonstration.
 
@@ -147,6 +155,7 @@ Ready to try it?
   /Council [topic to debate]
   /DeveloperCouncil [code to review]
   /ProductCouncil [requirements to evaluate]
+  /KnowledgeCouncil [knowledge management topic]
 
   Or invoke any specialist standalone:
     Task tool → subagent_type: "Architect"

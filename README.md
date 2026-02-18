@@ -1,6 +1,6 @@
 # forge-council
 
-Twelve specialists. Three councils. One verdict.
+Thirteen specialists. Four councils. One verdict.
 
 A single AI agent is a single perspective. It gives you one take — its own — and misses everything outside its frame. forge-council provides specialist agents that work from independent perspectives: architecture, design, implementation, testing, security, product, research. Assemble them into councils for multi-round debates, or invoke any specialist standalone.
 

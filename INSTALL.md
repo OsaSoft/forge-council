@@ -102,7 +102,7 @@ Once enabled, follow these steps to use your specialists:
 4.  **Councils**: Since Gemini CLI does not support parallel `TeamCreate`, council skills will run in **Sequential Simulation Mode**, where the lead agent adopts the specialists' personas one by one.
 
 ### 6. Verification
-Run `/Demo agents` to verify that all 12 specialists are correctly recognized by your current CLI.
+Run `/Demo agents` to verify that all 13 specialists are correctly recognized by your current CLI.
 
 Agents require a session restart to be discovered.
 

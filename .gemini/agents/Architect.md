@@ -2,7 +2,7 @@
 name: architect
 description: System architect — design patterns, boundaries, dependencies, scalability, long-term trade-offs. USE WHEN architecture decisions, system design, boundary analysis, scalability assessment.
 kind: local
-model: gemini-1.5-flash
+model: gemini-2.0-flash
 tools:
   - read_file
   - grep_search

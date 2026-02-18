@@ -2,7 +2,7 @@
 name: developer
 description: Senior developer specialist — implementation quality, patterns, correctness. USE WHEN code review, implementation quality, design patterns, refactoring assessment.
 kind: local
-model: gemini-1.5-flash
+model: gemini-2.0-flash
 tools:
   - read_file
   - grep_search

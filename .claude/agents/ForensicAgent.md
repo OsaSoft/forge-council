@@ -68,7 +68,7 @@ Classify each finding by severity:
 
 | Severity | Criteria | Example |
 |----------|----------|---------|
-| **CRITICAL** | Full identity — name + email + company in same context | "Martin Zeman, mzeman@proton.me, Proton AG" |
+| **CRITICAL** | Full identity — name + email + company in same context | "Jane Doe, jdoe@example.com, Acme Corp" |
 | **HIGH** | Partial identity — two PII items correlated | Name + email, or name + company |
 | **MEDIUM** | Single PII item in content | Real name in a sample file, email in a config |
 | **LOW** | Generic pattern match, likely false positive | Common first name in a variable, email-like string in test fixture |
