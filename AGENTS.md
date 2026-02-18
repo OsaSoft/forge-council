@@ -17,7 +17,7 @@ make install-skills     # install skills using SCOPE across Claude/Gemini/Codex
 make install-skills-claude  # install Claude skills using SCOPE
 make install-skills-gemini  # install skills only to ~/.gemini/skills/
 make install-skills-codex   # install Codex council skills using SCOPE
-make verify-skills      # verify skills across Claude, Gemini, Codex
+make verify-skills      # verify skills across Claude, Gemini, and Codex
 make clean              # remove previously installed agents
 make verify             # run verification checks from VERIFY.md
 
@@ -93,7 +93,7 @@ claude.tools: Read, Grep, Glob, Bash, Write, Edit
 | `Read, Grep, Glob, Bash, Write, Edit` | Developer, Tester |
 | `Read, Grep, Glob, WebSearch, WebFetch` | Researcher, ProductManager, Analyst |
 
-All agents use `sonnet` except `Opponent` which uses `opus`.
+All agents use `sonnet` except `Opponent`, `SecurityArchitect`, and `ForensicAgent` which use `opus`.
 
 ### Body structure (in order)
 
@@ -149,9 +149,9 @@ fallback. Main session IS the moderator (never spawn one). Maximum roster size 7
 - Local variables in functions declared with `local`
 - Functions don't exit -- let the caller decide error handling (unless fatal)
 
-forge-lib submodule (`lib/`) provides: `frontmatter.sh` (`fm_value`, `fm_body`),
-`install-agents.sh` (`deploy_agent`, `deploy_agents_from_dir`),
-`install-skills.sh` (provider-aware skill installer),
+forge-lib submodule (`lib/`) provides: `frontmatter.sh` (`fm_value`, `fm_body`,
+`fm_list`), `install-agents.sh` (`deploy_agent`, `deploy_agents_from_dir`),
+`install-skills.sh` (provider-aware skill installer), `sync-rosters.sh`,
 `generate-agent-skills.sh` (specialist wrapper generation helper, not used by default install flow),
 `strip-front.sh` (`strip_front [--keep key1,key2] file.md`).
 
