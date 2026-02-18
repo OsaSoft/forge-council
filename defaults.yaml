@@ -56,6 +56,24 @@ models:
   fast: sonnet
   strong: opus
 
+# Provider-specific overrides and whitelists
+gemini:
+  fast: gemini-1.5-flash
+  strong: gemini-1.5-pro
+  models:
+    - gemini-1.5-flash
+    - gemini-1.5-pro
+    - gemini-2.0-flash-exp
+
+claude:
+  fast: sonnet
+  strong: opus
+  models:
+    - sonnet
+    - opus
+    - haiku
+    - claude-3-5-sonnet-20240620
+
 # Agent configurations: model tier and tools
 Developer:
   model: fast
