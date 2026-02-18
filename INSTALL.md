@@ -34,13 +34,25 @@ This checks out [forge-lib](https://github.com/N4M3Z/forge-lib) into `lib/`, pro
 make install
 ```
 
-This installs specialists to `~/.claude/agents/` (Claude Code) and `~/.gemini/agents/` (Gemini CLI), and installs skills for Claude, Gemini, and Codex.
+By default, this installs agents and skills into the local project directory (`.gemini/agents/` and `.gemini/skills/`) for use in the current workspace (`SCOPE=workspace`).
+
+To install globally for your user (available in all projects):
+
+```bash
+make install SCOPE=user
+```
+
+This installs specialists to `~/.claude/agents/` (Claude Code) and `~/.gemini/agents/` (Gemini CLI), and installs skills for Claude and Gemini.
+
+Use `SCOPE=all` to target both workspace and user home directories.
+
+The Makefile automatically initializes and updates the `lib/` submodule if required scripts are missing.
 
 Provider-specific skill installs:
 
 ```bash
 make install-skills-claude   # ~/.claude/skills/
-make install-skills-gemini   # ~/.gemini/skills/
+make install-skills-gemini   # ~/.gemini/skills/ (uses SCOPE)
 make install-skills-codex    # ~/.codex/skills/ (+ generated specialist wrappers)
 ```
 
@@ -87,20 +99,21 @@ Agents require a session restart to be discovered.
 
 | Agent | Model | Council | Purpose |
 |-------|-------|---------|---------|
-| Developer | sonnet | dev, generic | Implementation quality, patterns, correctness |
-| Database | sonnet | dev | Schema design, query performance, migrations |
-| DevOps | sonnet | dev | CI/CD, deployment, monitoring, reliability |
-| DocumentationWriter | sonnet | dev | README quality, API docs, developer experience |
-| Tester | sonnet | dev | Test strategy, coverage, edge cases, regression |
-| SecurityArchitect | sonnet | dev | Threat modeling, security policy, architectural risk |
-| Architect | sonnet | generic | System design, boundaries, scalability, trade-offs |
-| Designer | sonnet | generic, product | UX, user needs, accessibility, interaction design |
-| ProductManager | sonnet | product | Requirements clarity, roadmap alignment, market fit |
-| Analyst | sonnet | product | Success metrics, KPIs, measurement, business impact |
-| Opponent | opus | standalone | Devil's advocate, stress-test ideas and decisions |
-| Researcher | sonnet | standalone | Deep web research, multi-query synthesis, citations |
+| Developer | fast | dev, generic | Implementation quality, patterns, correctness |
+| Database | fast | dev | Schema design, query performance, migrations |
+| DevOps | fast | dev | CI/CD, deployment, monitoring, reliability |
+| DocumentationWriter | fast | dev | README quality, API docs, developer experience |
+| Tester | fast | dev | Test strategy, coverage, edge cases, regression |
+| SecurityArchitect | strong | dev | Threat modeling, security policy, architectural risk |
+| Architect | fast | generic | System design, boundaries, scalability, trade-offs |
+| Designer | fast | generic, product | UX, user needs, accessibility, interaction design |
+| ProductManager | fast | product | Requirements clarity, roadmap alignment, market fit |
+| Analyst | fast | product | Success metrics, KPIs, measurement, business impact |
+| Opponent | strong | standalone | Devil's advocate, stress-test ideas and decisions |
+| Researcher | fast | standalone | Deep web research, multi-query synthesis, citations |
+| ForensicAgent | strong | standalone | PII and secret detection forensic specialist |
 
-No compiled binaries — forge-council is pure markdown orchestration. Agents are markdown files deployed to `~/.claude/agents/`.
+No compiled binaries — forge-council is pure markdown orchestration. Agents are markdown files deployed to `~/.claude/agents/` (if `SCOPE=user` or `all`) or `.gemini/agents/` (if `SCOPE=workspace` or `all`).
 
 ## Configuration
 
