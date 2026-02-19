@@ -1,8 +1,9 @@
 # forge-council Makefile
 
-.PHONY: help install install-agents install-skills install-skills-claude install-skills-gemini install-skills-codex install-teams-config clean verify verify-skills verify-skills-claude verify-skills-gemini verify-skills-codex test lint check
+.PHONY: help install install-agents install-skills install-skills-claude install-skills-gemini install-skills-codex install-teams-config clean verify verify-skills verify-skills-claude verify-skills-gemini verify-skills-codex verify-agents test lint check
 
 # Variables
+AGENTS = SoftwareDeveloper DatabaseEngineer DevOpsEngineer DocumentationWriter QaTester SecurityArchitect SystemArchitect UxDesigner ProductManager DataAnalyst TheOpponent WebResearcher ForensicAgent
 AGENT_SRC = agents
 SKILL_SRC = skills
 LIB_DIR = $(or $(FORGE_LIB),lib)
@@ -25,8 +26,9 @@ help:
 	@echo "  make install-skills-gemini Install skills via gemini CLI (uses SCOPE)"
 	@echo "  make install-skills-codex  Install native council skills via SCOPE (workspace/user/all)"
 	@echo "  make verify-skills         Verify skills for Claude, Gemini, and Codex"
+	@echo "  make verify-agents         Verify agents for Claude, Gemini, and Codex"
 	@echo "  make clean                 Remove previously installed agents"
-	@echo "  make verify                Verify the installation"
+	@echo "  make verify                Verify the full installation (agents + skills)"
 	@echo "  make test                  Run tests"
 	@echo "  make lint                  Shellcheck all scripts"
 	@echo "  make check                 Verify module structure"
@@ -189,36 +191,33 @@ check:
 	@test -x "$(INSTALL_SKILLS)" && echo "  ok install-skills" || echo "  MISSING install-skills (run: make -C $(LIB_DIR) build)"
 	@test -x "$(VALIDATE_MODULE)" && echo "  ok validate-module" || echo "  MISSING validate-module (run: make -C $(LIB_DIR) build)"
 
-verify: verify-skills
-	@if [ -f "VERIFY.md" ]; then \
-	  echo "Running verification checks (as defined in VERIFY.md)..."; \
-	  if [ "$(SCOPE)" = "workspace" ]; then \
-	    echo "Checking workspace Gemini agents..."; \
-	    ls .gemini/agents/{SoftwareDeveloper,DatabaseEngineer,DevOpsEngineer,DocumentationWriter,QaTester,SecurityArchitect,SystemArchitect,UxDesigner,ProductManager,DataAnalyst,TheOpponent,WebResearcher,ForensicAgent}.md; \
-	    echo "Checking workspace Codex agents..."; \
-	    ls .codex/agents/{SoftwareDeveloper,DatabaseEngineer,DevOpsEngineer,DocumentationWriter,QaTester,SecurityArchitect,SystemArchitect,UxDesigner,ProductManager,DataAnalyst,TheOpponent,WebResearcher,ForensicAgent}.md; \
+verify: verify-skills verify-agents
+
+verify-agents:
+	@missing=0; \
+	for provider in claude gemini codex; do \
+	  if [ "$(SCOPE)" = "all" ]; then \
+	    dirs="$(CURDIR)/.$$provider/agents $(HOME)/.$$provider/agents"; \
+	  elif [ "$(SCOPE)" = "workspace" ]; then \
+	    dirs="$(CURDIR)/.$$provider/agents"; \
 	  elif [ "$(SCOPE)" = "user" ]; then \
-	    echo "Checking user Claude agents..."; \
-	    ls $(HOME)/.claude/agents/{SoftwareDeveloper,DatabaseEngineer,DevOpsEngineer,DocumentationWriter,QaTester,SecurityArchitect,SystemArchitect,UxDesigner,ProductManager,DataAnalyst,TheOpponent,WebResearcher,ForensicAgent}.md; \
-	    echo "Checking user Gemini agents..."; \
-	    ls $(HOME)/.gemini/agents/{SoftwareDeveloper,DatabaseEngineer,DevOpsEngineer,DocumentationWriter,QaTester,SecurityArchitect,SystemArchitect,UxDesigner,ProductManager,DataAnalyst,TheOpponent,WebResearcher,ForensicAgent}.md; \
-	    echo "Checking user Codex agents..."; \
-	    ls $(HOME)/.codex/agents/{SoftwareDeveloper,DatabaseEngineer,DevOpsEngineer,DocumentationWriter,QaTester,SecurityArchitect,SystemArchitect,UxDesigner,ProductManager,DataAnalyst,TheOpponent,WebResearcher,ForensicAgent}.md; \
-	  elif [ "$(SCOPE)" = "all" ]; then \
-	    echo "Checking workspace Gemini agents..."; \
-	    ls .gemini/agents/{SoftwareDeveloper,DatabaseEngineer,DevOpsEngineer,DocumentationWriter,QaTester,SecurityArchitect,SystemArchitect,UxDesigner,ProductManager,DataAnalyst,TheOpponent,WebResearcher,ForensicAgent}.md; \
-	    echo "Checking workspace Codex agents..."; \
-	    ls .codex/agents/{SoftwareDeveloper,DatabaseEngineer,DevOpsEngineer,DocumentationWriter,QaTester,SecurityArchitect,SystemArchitect,UxDesigner,ProductManager,DataAnalyst,TheOpponent,WebResearcher,ForensicAgent}.md; \
-	    echo "Checking user Claude agents..."; \
-	    ls $(HOME)/.claude/agents/{SoftwareDeveloper,DatabaseEngineer,DevOpsEngineer,DocumentationWriter,QaTester,SecurityArchitect,SystemArchitect,UxDesigner,ProductManager,DataAnalyst,TheOpponent,WebResearcher,ForensicAgent}.md; \
-	    echo "Checking user Gemini agents..."; \
-	    ls $(HOME)/.gemini/agents/{SoftwareDeveloper,DatabaseEngineer,DevOpsEngineer,DocumentationWriter,QaTester,SecurityArchitect,SystemArchitect,UxDesigner,ProductManager,DataAnalyst,TheOpponent,WebResearcher,ForensicAgent}.md; \
-	    echo "Checking user Codex agents..."; \
-	    ls $(HOME)/.codex/agents/{SoftwareDeveloper,DatabaseEngineer,DevOpsEngineer,DocumentationWriter,QaTester,SecurityArchitect,SystemArchitect,UxDesigner,ProductManager,DataAnalyst,TheOpponent,WebResearcher,ForensicAgent}.md; \
+	    dirs="$(HOME)/.$$provider/agents"; \
 	  else \
-	    echo "Invalid SCOPE: $(SCOPE)"; \
-	    exit 1; \
+	    echo "Invalid SCOPE: $(SCOPE)"; exit 1; \
 	  fi; \
-	else \
-	  echo "VERIFY.md not found."; \
-	fi
+	  for dst in $$dirs; do \
+	    echo "Verifying $$provider agents in $$dst..."; \
+	    for a in $(AGENTS); do \
+	      if test -f "$$dst/$$a.md"; then \
+	        echo "  ok $$a"; \
+	      else \
+	        echo "  missing $$a"; \
+	        missing=1; \
+	      fi; \
+	    done; \
+	  done; \
+	done; \
+	if [ $$missing -ne 0 ]; then \
+	  echo "Run 'make install' to deploy agents."; \
+	fi; \
+	test $$missing -eq 0
