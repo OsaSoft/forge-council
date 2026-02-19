@@ -14,6 +14,7 @@ CODEX_SKILLS_DST ?= $(if $(filter workspace,$(SCOPE)),$(CURDIR)/.codex/skills,$(
 # Rust binaries from forge-lib submodule
 INSTALL_AGENTS := $(LIB_DIR)/bin/install-agents
 INSTALL_SKILLS := $(LIB_DIR)/bin/install-skills
+VALIDATE_MODULE := $(LIB_DIR)/bin/validate-module
 
 help:
 	@echo "forge-council management commands:"
@@ -149,12 +150,8 @@ verify-skills-codex:
 	fi; \
 	test $$missing -eq 0
 
-test:
-	@MODULE_ROOT="$(CURDIR)" bash $(LIB_DIR)/tests/test-module-structure.sh
-	@MODULE_ROOT="$(CURDIR)" bash $(LIB_DIR)/tests/test-agent-frontmatter.sh
-	@MODULE_ROOT="$(CURDIR)" bash $(LIB_DIR)/tests/test-defaults-consistency.sh
-	@MODULE_ROOT="$(CURDIR)" bash $(LIB_DIR)/tests/test-skill-integrity.sh
-	@MODULE_ROOT="$(CURDIR)" bash $(LIB_DIR)/tests/test-deploy-parity.sh
+test: $(VALIDATE_MODULE)
+	@$(VALIDATE_MODULE) $(CURDIR)
 
 lint:
 	@if find . -name '*.sh' -not -path '*/target/*' -not -path '*/lib/*' | grep -q .; then \
@@ -169,6 +166,7 @@ check:
 	@test -f module.yaml && echo "  ok module.yaml" || echo "  MISSING module.yaml"
 	@test -x "$(INSTALL_AGENTS)" && echo "  ok install-agents" || echo "  MISSING install-agents (run: make -C $(LIB_DIR) build)"
 	@test -x "$(INSTALL_SKILLS)" && echo "  ok install-skills" || echo "  MISSING install-skills (run: make -C $(LIB_DIR) build)"
+	@test -x "$(VALIDATE_MODULE)" && echo "  ok validate-module" || echo "  MISSING validate-module (run: make -C $(LIB_DIR) build)"
 
 verify: verify-skills
 	@if [ -f "VERIFY.md" ]; then \
