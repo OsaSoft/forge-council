@@ -1,10 +1,7 @@
 ---
-title: Database
-description: Database specialist for schema design, query performance, and data integrity
-claude.name: Database
-claude.model: sonnet
-claude.description: "Database specialist — schema design, query performance, migrations, data integrity. USE WHEN database review, schema design, query optimization, migration safety."
-claude.tools: Read, Grep, Glob, Bash
+name: DatabaseEngineer
+description: "Database specialist — schema design, query performance, migrations, data integrity. USE WHEN database review, schema design, query optimization, migration safety."
+version: 0.3.0
 ---
 
 > Database specialist focused on data modeling, query performance, and migration safety. Shipped with forge-council.

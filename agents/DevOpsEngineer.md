@@ -1,10 +1,7 @@
 ---
-title: DevOps
-description: DevOps specialist for CI/CD, deployment, monitoring, and infrastructure
-claude.name: DevOps
-claude.model: sonnet
-claude.description: "DevOps specialist — CI/CD, deployment, monitoring, reliability, security posture. USE WHEN deployment review, CI/CD pipeline, infrastructure assessment, operational risk."
-claude.tools: Read, Grep, Glob, Bash
+name: DevOpsEngineer
+description: "DevOps specialist — CI/CD, deployment, monitoring, reliability, security posture. USE WHEN deployment review, CI/CD pipeline, infrastructure assessment, operational risk."
+version: 0.3.0
 ---
 
 > DevOps specialist focused on operational concerns — deployment, CI/CD, monitoring, and reliability. Shipped with forge-council.

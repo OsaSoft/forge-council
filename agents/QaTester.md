@@ -1,10 +1,7 @@
 ---
-title: Tester
-description: QA specialist for test strategy, coverage, edge cases, and regression risk
-claude.name: Tester
-claude.model: sonnet
-claude.description: "QA specialist — test strategy, coverage gaps, edge cases, regression risk, test architecture. USE WHEN test review, coverage analysis, edge case identification, regression assessment."
-claude.tools: Read, Grep, Glob, Bash, Write, Edit, WebSearch
+name: QaTester
+description: "QA specialist — test strategy, coverage gaps, edge cases, regression risk, test architecture. USE WHEN test review, coverage analysis, edge case identification, regression assessment."
+version: 0.3.0
 ---
 
 > QA specialist focused on testing and quality assurance — test strategy, coverage, edge cases, and regression risk. Shipped with forge-council.

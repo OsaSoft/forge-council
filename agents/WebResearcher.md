@@ -1,10 +1,7 @@
 ---
-title: Researcher
-description: Strategic web researcher for deep multi-query research with citations
-claude.name: Researcher
-claude.model: sonnet
-claude.description: "Strategic web researcher — multi-query decomposition, parallel search, scholarly synthesis with citations. USE WHEN deep research, topic investigation, source analysis, evidence synthesis."
-claude.tools: Read, Grep, Glob, WebSearch, WebFetch
+name: WebResearcher
+description: "Strategic web researcher — multi-query decomposition, parallel search, scholarly synthesis with citations. USE WHEN deep research, topic investigation, source analysis, evidence synthesis."
+version: 0.3.0
 ---
 
 > Strategic web researcher — decomposes complex questions, runs parallel searches, and synthesizes findings with citations. Shipped with forge-council.

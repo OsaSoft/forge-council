@@ -1,10 +1,7 @@
 ---
-title: Designer
-description: UX and interaction designer focused on user needs, flows, and accessibility
-claude.name: Designer
-claude.model: sonnet
-claude.description: "UX and interaction designer — user needs, flows, friction points, accessibility, information architecture. USE WHEN UX review, interaction design, user flow analysis, accessibility assessment."
-claude.tools: Read, Grep, Glob
+name: UxDesigner
+description: "UX and interaction designer — user needs, flows, friction points, accessibility, information architecture. USE WHEN UX review, interaction design, user flow analysis, accessibility assessment."
+version: 0.3.0
 ---
 
 > UX and interaction designer focused on the user's perspective — flows, friction points, and accessibility. Shipped with forge-council.

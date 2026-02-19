@@ -1,28 +1,20 @@
 ---
-name: Council
+name: DebateCouncil
+version: 0.1.0
 description: "Convene a PAI-style council — 3-round debate where specialists challenge each other. USE WHEN multi-perspective discussion, architecture debate, strategy decisions, cross-domain analysis."
 argument-hint: "[topic or question to debate] [with security|with opponent|with docs] [autonomous|interactive|quick]"
 ---
 
-# Council
+# DebateCouncil
 
 You are the **moderator** of a council debate. Your job is to convene diverse specialists, run a structured 3-round debate where they respond to each other's points, and synthesize the discussion into a clear recommendation.
 
-## Step 1: Gate Check
-
-```bash
-echo "${CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS:-0}"
-```
-
-- If `1`: use agent teams (TeamCreate + parallel Task spawning)
-- If `0` or missing: fall back to sequential mode (see Step 8)
-
-## Step 2: Parse Input
+## Step 1: Parse Input
 
 Extract from the user's input:
 
 1. **Topic**: The question or subject to debate
-2. **Optional extras**: "with security" → add SecurityArchitect, "with opponent" → add Opponent, "with docs" → add DocumentationWriter
+2. **Optional extras**: "with security" → add SecurityArchitect, "with opponent" → add TheOpponent, "with docs" → add DocumentationWriter
 3. **Mode**: Detected from keywords (default if none specified):
 
 | Keyword | Mode | Behavior |
@@ -32,24 +24,24 @@ Extract from the user's input:
 | "interactive", "step by step" | interactive | Pause after every round |
 | "quick", "quick check" | quick | Round 1 only + synthesis |
 
-## Step 3: Select Roster
+## Step 2: Select Roster
 
-**Default (always)**: Architect, Designer, Developer, Researcher
+**Default (always)**: SystemArchitect, UxDesigner, SoftwareDeveloper, WebResearcher
 
 **Optional extras** (added when requested or clearly relevant):
 
 | Condition | Add |
 |-----------|-----|
 | "with security", auth/data/compliance topics | SecurityArchitect |
-| "with opponent", high-stakes decision, major pivot | Opponent |
+| "with opponent", high-stakes decision, major pivot | TheOpponent |
 | "with docs", public-facing, API, documentation | DocumentationWriter |
 
-## Step 4: Spawn Team
+## Step 3: Spawn Team
 
 1. **TeamCreate** with name `council`
 2. For each roster member, spawn via **Task** tool:
    - `team_name: "council"`
-   - `subagent_type: "{AgentName}"` (e.g., `Architect`, `Designer`, `Developer`, `Researcher`)
+   - `subagent_type: "{AgentName}"` (e.g., `SystemArchitect`, `UxDesigner`, `SoftwareDeveloper`, `WebResearcher`)
    - `name: "council-{role}"` (e.g., `council-arch`, `council-design`, `council-dev`, `council-research`)
    - `mode: "bypassPermissions"`
    - Prompt includes:
@@ -60,30 +52,30 @@ Extract from the user's input:
 
 3. **TaskCreate** for each specialist
 
-## Step 5: Round 1 — Initial Positions
+## Step 4: Round 1 — Initial Positions
 
 Collect all specialist positions via SendMessage. Wait for all to report.
 
-**If quick mode**: Skip to Step 7 (synthesis).
+**If quick mode**: Skip to Step 6 (synthesis).
 
 **If checkpoint or interactive mode**: Present Round 1 positions to the user:
 
 ```
 ### Round 1: Initial Positions
 
-**Architect**: [position summary]
-**Designer**: [position summary]
-**Developer**: [position summary]
-**Researcher**: [position summary]
+**SystemArchitect**: [position summary]
+**UxDesigner**: [position summary]
+**SoftwareDeveloper**: [position summary]
+**WebResearcher**: [position summary]
 ```
 
 Then ask via **AskUserQuestion**:
 - Question: "Round 1 positions above. Any context to add or focus to redirect before the debate rounds?"
 - Options: "Continue to debate", "Add context (free text)", "Skip to synthesis (Round 1 only)"
 
-If user adds context, include it in Round 2 prompts. If user skips, go to Step 7.
+If user adds context, include it in Round 2 prompts. If user skips, go to Step 6.
 
-## Step 6: Rounds 2 & 3 — Debate
+## Step 5: Rounds 2 & 3 — Debate
 
 ### Round 2: Responses & Challenges
 
@@ -121,7 +113,7 @@ ROUND 3 INSTRUCTION: Given the full discussion, identify:
 
 Collect all Round 3 responses.
 
-## Step 7: Synthesize and Teardown
+## Step 6: Synthesize and Teardown
 
 Produce the final verdict:
 
@@ -156,14 +148,14 @@ After synthesis:
 1. Send **shutdown_request** to each teammate
 2. **TeamDelete** to clean up
 
-## Step 8: Sequential Fallback
+## Step 7: Sequential Fallback
 
 If agent teams are not available:
 
-> **Gemini CLI Note**: In the Gemini CLI, the `Task` tool is replaced by direct `@`-invocation. Instead of spawning a task, invoke the specialist directly in your prompt using `@AgentName` (e.g., `Hey @Architect, please review...`). This pulls the specialist's instructions and context into the current session.
+> **Gemini CLI Note**: In the Gemini CLI, the `Task` tool is replaced by direct `@`-invocation. Instead of spawning a task, invoke the specialist directly in your prompt using `@AgentName` (e.g., `Hey @SystemArchitect, please review...`). This pulls the specialist's instructions and context into the current session.
 
 1. **Round 1**: For each roster member, use **Task** tool (no `team_name`) with `subagent_type: "{AgentName}"`. Collect results.
-2. **[Checkpoint]**: Present positions, ask user (same as Step 5).
+2. **[Checkpoint]**: Present positions, ask user (same as Step 4).
 3. **Round 2**: For each, spawn new Task with Round 1 transcript + Round 2 instruction.
 4. **Round 3**: For each, spawn new Task with Round 1+2 transcript + Round 3 instruction.
 5. Synthesize using the same verdict format.
