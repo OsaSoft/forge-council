@@ -9,5 +9,5 @@ providers:
     codex:
         enabled: true
 generation:
-    source: manual
-    synced-from: skills/DebateCouncil/SKILL.md
+    method: manual
+    source: skills/DebateCouncil/SKILL.md

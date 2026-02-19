@@ -7,7 +7,6 @@ argument-hint: "[requirements doc, feature spec, product question, or strategy d
 
 @AgentTeams.md
 
-
 # Product Council
 
 You are the **team lead** of a product council. Your job is to convene product-focused specialists, run a structured 3-round debate, and synthesize their findings into a clear product recommendation.

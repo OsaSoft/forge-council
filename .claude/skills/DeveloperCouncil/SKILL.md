@@ -7,7 +7,6 @@ argument-hint: "[task description, PR reference, file paths, or architectural qu
 
 @AgentTeams.md
 
-
 # Developer Council
 
 You are the **team lead** of a developer council. Your job is to convene the right specialists, run a structured 3-round debate where they respond to each other's findings, and synthesize into a unified verdict.

@@ -82,7 +82,7 @@ install-teams-config: install-skills-claude
 	      sf="$$dst/$$skill/SKILL.md"; \
 	      if [ -f "$$sf" ]; then \
 	        if ! grep -q '@AgentTeams.md' "$$sf"; then \
-	          awk 'BEGIN{n=0} /^---$$/{n++; print; if(n==2){print ""; print "@AgentTeams.md"; print ""} next} {print}' "$$sf" > "$$sf.tmp" && \
+	          awk 'BEGIN{n=0} /^---$$/{n++; print; if(n==2){print ""; print "@AgentTeams.md"} next} {print}' "$$sf" > "$$sf.tmp" && \
 	          command mv "$$sf.tmp" "$$sf"; \
 	        fi; \
 	        echo "  $$skill: @AgentTeams.md"; \
