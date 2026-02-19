@@ -109,8 +109,21 @@ providers:
 
     claude:
         models:
-            - claude-opus-4.6
-            - claude-haiku-4.6
+            - claude-opus-4-6
             - claude-sonnet-4-6
         fast: claude-sonnet-4-6
-        strong: claude-opus-4.6
+        strong: claude-opus-4-6
+
+    codex:
+        models:
+            - claude-opus-4-6
+            - claude-sonnet-4-6
+        fast: claude-sonnet-4-6
+        strong: claude-opus-4-6
+
+    opencode:
+        models:
+            - claude-opus-4-6
+            - claude-sonnet-4-6
+        fast: claude-sonnet-4-6
+        strong: claude-opus-4-6

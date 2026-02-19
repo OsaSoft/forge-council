@@ -7,6 +7,7 @@ config.yaml
 .codex/skills/*
 .gemini/agents/*
 .gemini/skills/*
+.opencode/skills/*
 
 # Keep directory structure
 !.claude/agents/.gitkeep
@@ -15,3 +16,4 @@ config.yaml
 !.codex/skills/.gitkeep
 !.gemini/agents/.gitkeep
 !.gemini/skills/.gitkeep
+!.opencode/skills/.gitkeep
