@@ -36,6 +36,7 @@ ifneq ($(wildcard $(LIB_DIR)/mk/common.mk),)
   include $(LIB_DIR)/mk/skills/verify.mk
   include $(LIB_DIR)/mk/agents/install.mk
   include $(LIB_DIR)/mk/agents/verify.mk
+  include $(LIB_DIR)/mk/lint.mk
 endif
 
 install: install-agents install-skills install-teams-config
@@ -80,14 +81,7 @@ verify: verify-skills verify-agents
 test: $(VALIDATE_MODULE)
 	@$(VALIDATE_MODULE) $(CURDIR)
 
-lint:
-	@if find . -name '*.sh' -not -path '*/target/*' -not -path '*/lib/*' | grep -q .; then \
-	  if ! command -v shellcheck >/dev/null 2>&1; then \
-	    echo "shellcheck not installed (install with: brew install shellcheck)"; \
-	    exit 1; \
-	  fi; \
-	  find . -name '*.sh' -not -path '*/target/*' -not -path '*/lib/*' -print0 | xargs -0 shellcheck -S warning; \
-	fi
+lint: lint-schema lint-shell
 
 check:
 	@test -f module.yaml && echo "  ok module.yaml" || echo "  MISSING module.yaml"
