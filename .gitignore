@@ -21,3 +21,9 @@ config.yaml
 !.gemini/skills/.gitkeep
 !.opencode/agents/.gitkeep
 !.opencode/skills/.gitkeep
+
+# local agent config
+.claude/settings.local.json
+
+# IDE files
+.idea/
