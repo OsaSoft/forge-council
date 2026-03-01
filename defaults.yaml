@@ -115,6 +115,10 @@ agents:
         model: strong
         tools: Read, Grep, Glob, WebSearch
 
+    RequirementsElicitor:
+        model: fast
+        tools: Read, Grep, Glob, WebSearch, WebFetch
+
     IndustryExpert:
         model: fast
         tools: Read, Grep, Glob, WebSearch, WebFetch
